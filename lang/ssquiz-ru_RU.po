@@ -1,0 +1,498 @@
+# Copyright (C) 2013 SS Quiz
+# This file is distributed under the same license as the SS Quiz package.
+msgid ""
+msgstr ""
+"Project-Id-Version: SS Quiz 2.0\n"
+"Report-Msgid-Bugs-To: http://wordpress.org/tag/ssquiz\n"
+"POT-Creation-Date: 2013-05-10 19:53:15+00:00\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"PO-Revision-Date: 2013-05-11 01:24+0500\n"
+"Last-Translator: \n"
+"Language-Team: \n"
+"X-Generator: Poedit 1.5.5\n"
+
+#: admin-doc.php:8
+msgid "SSQuiz Documentation"
+msgstr "Документация SSQuiz"
+
+#: admin-doc.php:21
+msgid "General Usage"
+msgstr "Общее пользование"
+
+#: admin-doc.php:66
+msgid "For Developers"
+msgstr "Для разработчиков"
+
+#: admin-main.php:207 admin-statistics.php:117
+msgid "Prev"
+msgstr "Пред"
+
+#: admin-main.php:215 admin-statistics.php:125 client-side.php:373
+#: ssquiz.php:394
+msgid "Next"
+msgstr "След"
+
+#: admin-main.php:231 ssquiz.php:375
+msgid "Add Question"
+msgstr "Добавить вопрос"
+
+#: admin-main.php:234 admin-main.php:257
+msgid "Edit"
+msgstr "Правка"
+
+#: admin-main.php:295
+msgid "Manage Quizzes"
+msgstr "Управление тестами"
+
+#: admin-main.php:299
+msgid "Filter quizzes: "
+msgstr "Фильтр тестов"
+
+#: admin-main.php:308 admin-side.php:136 admin-side.php:150 ssquiz.php:373
+msgid "Add Quiz"
+msgstr "Добавить тест"
+
+#: admin-main.php:380
+msgid "Fill"
+msgstr "Заполнить"
+
+#: admin-main.php:381
+msgid "Choise"
+msgstr "Выбор"
+
+#: admin-settings.php:46
+msgid "SSQuiz Settings"
+msgstr "Настройки SSQuiz"
+
+#: admin-settings.php:73
+msgid "Start Screen"
+msgstr "Начальная страница"
+
+#: admin-settings.php:74
+msgid "Folowing content will appear when quiz is loaded on page"
+msgstr "Следующий текст появится когда загрузиться тест"
+
+#: admin-settings.php:78 admin-settings.php:98 admin-settings.php:120
+#: admin-settings.php:126 admin-settings.php:154 admin-settings.php:161
+#: admin-side.php:312 admin-side.php:330 admin-side.php:351 admin-side.php:377
+msgid "Title of the quiz"
+msgstr "Название теста"
+
+#: admin-settings.php:79 admin-settings.php:99 admin-settings.php:127
+#: admin-settings.php:162 admin-side.php:313 admin-side.php:331
+#: admin-side.php:352 admin-side.php:378
+msgid "Description of the quiz"
+msgstr "Оисание теста"
+
+#: admin-settings.php:80 admin-side.php:314
+msgid "Total number of questions"
+msgstr "Всего вопросов"
+
+#: admin-settings.php:91
+msgid "Finish Screen"
+msgstr "Последняя страница"
+
+#: admin-settings.php:92
+msgid "Folowing content will appear when quiz is competed or exited"
+msgstr "Следующий текст появиться, если тест будет завершен"
+
+#: admin-settings.php:96 admin-settings.php:119 admin-settings.php:124
+#: admin-settings.php:153 admin-settings.php:158 admin-side.php:328
+#: admin-side.php:375
+msgid "User's name"
+msgstr "Имя"
+
+#: admin-settings.php:97 admin-settings.php:125 admin-settings.php:160
+#: admin-side.php:329
+msgid "Quiz's ID"
+msgstr "ID теста"
+
+#: admin-settings.php:100 admin-settings.php:128 admin-settings.php:163
+#: admin-side.php:332
+msgid "Number of answered questions"
+msgstr "Число отвеченных вопросов"
+
+#: admin-settings.php:101 admin-settings.php:129 admin-settings.php:164
+#: admin-side.php:333 admin-side.php:354 admin-side.php:380
+msgid "Number of correct answers"
+msgstr "Число правильных ответов"
+
+#: admin-settings.php:102 admin-settings.php:130 admin-settings.php:165
+#: admin-side.php:334 admin-side.php:355 admin-side.php:381
+msgid "Percent of correct answered over total questions"
+msgstr "Процент правильных ответов"
+
+#: admin-settings.php:113 admin-side.php:342
+msgid "Email Template to user"
+msgstr "Шаблон письма пользователю"
+
+#: admin-settings.php:114
+msgid "Folowing content can be sent as a message to user"
+msgstr ""
+"Следующий текст может быть отправлен пользователю после окончания теста"
+
+#: admin-settings.php:116 admin-settings.php:150 admin-side.php:343
+#: admin-side.php:365
+msgid "Subject"
+msgstr "Тема"
+
+#: admin-settings.php:145 admin-side.php:364
+msgid "Teacher's Template"
+msgstr "Шаблон учителя"
+
+#: admin-settings.php:146
+msgid "Folowing content can be sent as a message to third person (teacher)"
+msgstr ""
+"Следующий текст может быть отправлен третьему лицу (учителю) после окончания "
+"теста"
+
+#: admin-settings.php:148
+msgid "Email address"
+msgstr "E-Mail"
+
+#: admin-settings.php:159 admin-side.php:376
+msgid "User's email"
+msgstr "E-Mail"
+
+#: admin-side.php:16
+msgid "Quiz's Users"
+msgstr "Пользователи Теста"
+
+#: admin-side.php:20
+msgid "Clear this list"
+msgstr "Очистить этот список"
+
+#: admin-side.php:25 client-quiz.php:95 client-side.php:83
+msgid "Name"
+msgstr "Название"
+
+#: admin-side.php:26 client-quiz.php:106 client-side.php:88
+msgid "E-Mail"
+msgstr "E-Mail"
+
+#: admin-side.php:27 admin-side.php:192
+msgid "Quiz"
+msgstr "Тест"
+
+#: admin-side.php:28
+msgid "Answered"
+msgstr "Отвечено"
+
+#: admin-side.php:29
+msgid "Correct"
+msgstr "Правильных"
+
+#: admin-side.php:30
+msgid "Time"
+msgstr "Время"
+
+#: admin-side.php:77
+msgid "ERROR:You should write answer"
+msgstr "ОШИБКА: Укажити ответ"
+
+#: admin-side.php:81
+msgid "ERROR:You should write question"
+msgstr "ОШИБКА: Укажити вопрос"
+
+#: admin-side.php:85
+msgid "No Quiz selected"
+msgstr "Не выбран тест"
+
+#: admin-side.php:94
+msgid "Error while replacing"
+msgstr "Ошибка при замене"
+
+#: admin-side.php:122
+msgid "ERROR:You should write title"
+msgstr "ОШИБКА: Укажити название"
+
+#: admin-side.php:126
+msgid "ERROR:You should write description"
+msgstr "ОШИБКА: Укажити описание"
+
+#: admin-side.php:136
+msgid "SSQuiz Manager"
+msgstr "Управление SSQuiz"
+
+#: admin-side.php:141
+msgid "New Quiz's title"
+msgstr "Название нового теста"
+
+#: admin-side.php:145
+msgid "New Quiz's description"
+msgstr "Описание нового теста"
+
+#: admin-side.php:156
+msgid "View Quiz"
+msgstr "Просмотреть Тест"
+
+#: admin-side.php:158
+msgid "All"
+msgstr "Все"
+
+#: admin-side.php:193
+msgid "Number"
+msgstr "Номер"
+
+#: admin-side.php:194 admin-side.php:463 client-quiz.php:203
+#: client-quiz.php:260 client-side.php:217 client-side.php:318
+#: client-side.php:410
+msgid "Question"
+msgstr "Вопрос"
+
+#: admin-side.php:195
+msgid "Correct Answer"
+msgstr "Правильный ответ"
+
+#: admin-side.php:196
+msgid "Answers"
+msgstr "Ответы"
+
+#: admin-side.php:218 admin-side.php:220
+msgid "Total questions"
+msgstr "Всего вопросов"
+
+#: admin-side.php:218 admin-side.php:220 admin-side.php:250
+#: admin-statistics.php:155
+msgid "delete"
+msgstr "удалить"
+
+#: admin-side.php:218 admin-side.php:220 admin-side.php:249
+msgid "edit"
+msgstr "правка"
+
+#: admin-side.php:218 admin-side.php:220 admin-side.php:560 admin-side.php:575
+msgid "add question"
+msgstr "добавить вопрос"
+
+#: admin-side.php:303
+msgid "Quiz Templates"
+msgstr "Шаблоны Теста"
+
+#: admin-side.php:305
+msgid "Welcome Screen"
+msgstr "Первая страница"
+
+#: admin-side.php:317 admin-side.php:337 admin-side.php:384
+msgid "Submit"
+msgstr "Принять"
+
+#: admin-side.php:322
+msgid "Result Screen"
+msgstr "Последняя страница"
+
+#: admin-side.php:348
+msgid "User will receive email?"
+msgstr "Пользователь будет получать результаты?"
+
+#: admin-side.php:353 admin-side.php:379
+msgid "Number of answered"
+msgstr "Число отвеченных"
+
+#: admin-side.php:370
+msgid "Teacher's email"
+msgstr "почта учителя"
+
+#: admin-side.php:372
+msgid "Teacher will receive email?"
+msgstr "Учитель будет получать результаты?"
+
+#: admin-side.php:467 admin-side.php:563
+msgid "Insert Media"
+msgstr "Вставить Медиа"
+
+#: admin-side.php:480 admin-side.php:566
+msgid "Answer is"
+msgstr "Ответ -"
+
+#: admin-side.php:482 admin-side.php:569
+msgid "correct"
+msgstr "правильный"
+
+#: admin-side.php:486
+msgid "Add answer"
+msgstr "Добавить ответ"
+
+#: admin-side.php:497 ssquiz.php:377
+msgid "Save"
+msgstr "Сохранить"
+
+#: admin-side.php:536
+msgid "Quiz's title"
+msgstr "Название теста"
+
+#: admin-side.php:540
+msgid "Quiz's description"
+msgstr "Описание теста"
+
+#: admin-side.php:584 ssquiz.php:405
+msgid ""
+"If you have questions, suggestions or want to know about my upcoming "
+"projects, visit"
+msgstr ""
+"Если у вас есть вопросы, пожелания или хотите знать о моих последующих "
+"проектах, посетите"
+
+#: admin-statistics.php:174
+msgid "SSQuiz Statistics"
+msgstr "Статистика SSQuiz"
+
+#: admin-statistics.php:182
+msgid "Find: "
+msgstr "Найти:"
+
+#: admin-statistics.php:185
+msgid "only passed"
+msgstr "только успешные"
+
+#: admin-statistics.php:190
+msgid "Delete All Entries"
+msgstr "Удалить все записи"
+
+#: client-quiz.php:40
+msgid "Quiz is not selected"
+msgstr "Тест не выбран"
+
+#: client-quiz.php:53
+msgid "Quiz doesn't exist"
+msgstr "Тест не существует"
+
+#: client-quiz.php:77 client-side.php:67
+msgid "You already took this quiz"
+msgstr "Вы проходили этот тест"
+
+#: client-quiz.php:97
+msgid "Please write your name"
+msgstr "Введите ваше имя"
+
+#: client-quiz.php:108
+msgid "Not a valid e-mail address"
+msgstr "Неверный Email"
+
+#: client-quiz.php:120 client-side.php:95
+msgid "Start"
+msgstr "Начать"
+
+#: client-quiz.php:121 client-side.php:97
+msgid "Exit"
+msgstr "Выход"
+
+#: client-quiz.php:208 client-quiz.php:211
+msgid "Your answer: "
+msgstr "Выш ответ:"
+
+#: client-quiz.php:209 client-quiz.php:248 client-side.php:229
+msgid "You were right!"
+msgstr "Вы были правы"
+
+#: client-quiz.php:211
+msgid "You didn't answer"
+msgstr "Вы не ответили"
+
+#: client-quiz.php:213
+msgid "Correct answer is"
+msgstr "Правильный ответ -"
+
+#: client-quiz.php:250
+msgid "You were wrong!"
+msgstr "Вы были не правы"
+
+#: client-quiz.php:308
+msgid "Get Results"
+msgstr "Результаты"
+
+#: client-quiz.php:311
+msgid "Answered questions"
+msgstr "Отвеченные вопросы"
+
+#: client-quiz.php:318 client-side.php:249
+msgid "Back"
+msgstr "Назад"
+
+#: client-side.php:10
+msgid "Quiz is not selected! Please, read readme.txt"
+msgstr "Не выбран тест. Прочтите документацию"
+
+#: client-side.php:55
+msgid "Time left"
+msgstr "Время истекло"
+
+#: client-side.php:221
+msgid "Correct answer"
+msgstr "Правильный ответ"
+
+#: client-side.php:224
+msgid "Your answer"
+msgstr "Ваш ответ"
+
+#: client-side.php:226
+msgid "You didn't answer to this question."
+msgstr "Вы не ответили на этот вопрос"
+
+#: client-side.php:305 client-side.php:400
+msgid "There is no tests in quiz"
+msgstr "Нет вопросов в тесте"
+
+#: client-side.php:349 client-side.php:405 ssquiz.php:393
+msgid "Finish"
+msgstr "Завершить"
+
+#: ssquiz.php:262
+msgid "Back to school"
+msgstr "Назад в школу"
+
+#. #-#-#-#-#  plugin.pot (SS Quiz 2.0)  #-#-#-#-#
+#. Plugin Name of the plugin/theme
+#: ssquiz.php:341
+msgid "SS Quiz"
+msgstr "SS Quiz"
+
+#: ssquiz.php:342
+msgid "Statistics"
+msgstr "Статистика"
+
+#: ssquiz.php:343
+msgid "Settings"
+msgstr "Настройки"
+
+#: ssquiz.php:344
+msgid "Documentation"
+msgstr "Документация"
+
+#: ssquiz.php:374
+msgid "Edit Quiz"
+msgstr "Редактировать тест"
+
+#: ssquiz.php:376
+msgid "Edit Question"
+msgstr "Редактировать Вопрос"
+
+#. Plugin URI of the plugin/theme
+msgid "http://100vadim.com/ssquiz/"
+msgstr "http://100vadim.com/ssquiz/"
+
+#. Description of the plugin/theme
+msgid ""
+"With this plugin you can make quizzes really fast. Add questions/quizzes, "
+"rearrange questions, edit answers, insert multimedia in questions, - all of "
+"this can be done on single page within several seconds. Also one can edit "
+"welcome/finish/email templates using html if it's needed.  To insert quiz "
+"into page, use short code [ssquiz id='#']. Quiz automatically determines "
+"what type of test user creates (choose-correct, fill-blank or question with "
+"several correct answers)"
+msgstr ""
+"С помощью этого плагина вы можете создавать тесты очень быстро. Добавить "
+"тест, изменить порядок вопросов, редактировать тесты, - все можно сделать на "
+"обной странице за несколько секунд. Также вы можете менять шаблоны для "
+"начала, конца теста, а также для письма. Чтобы вставить тест на страницу, "
+"используйте формат [ssquiz id='#']."
+
+#. Author of the plugin/theme
+msgid "SSVadim"
+msgstr "SSVadim"
+
+#. Author URI of the plugin/theme
+msgid "http://100vadim.com"
+msgstr "http://100vadim.com"

@@ -1,0 +1,218 @@
+.ssquiz {
+	 padding: 0.5cm;
+	 position:relative;
+	 margin-top: 20px;
+	 padding-bottom: 40px;
+}
+
+.ssquiz_header h2 {
+	text-align: center;
+}
+
+.ssquiz hr {
+	background:#444;
+}
+
+.ssquiz_body {
+	padding-bottom:20px;
+	padding-left:10px;
+}
+
+.ssquiz_btn {
+	-moz-box-shadow:inset 0px 1px 0px 0px #ffffff;
+	-webkit-box-shadow:inset 0px 1px 0px 0px #ffffff;
+	box-shadow:inset 0px 1px 0px 0px #ffffff;
+	background:-webkit-gradient( linear, left top, left bottom, color-stop(0.05, #ededed), color-stop(1, #dfdfdf) );
+	background:-moz-linear-gradient( center top, #ededed 5%, #dfdfdf 100% );
+	filter:progid:DXImageTransform.Microsoft.gradient(startColorstr='#ededed', endColorstr='#dfdfdf');
+	background-color:#ededed;
+	-moz-border-radius:5px;
+	-webkit-border-radius:5px;
+	border-radius:5px;
+	//border:1px solid #dcdcdc;
+	display:inline-block;
+	color:#777777;
+	font-family:arial;
+	font-size:17px;
+	font-weight:bold;
+	padding:3px;
+	text-decoration:none;
+	text-shadow:1px 1px 0px #ffffff;
+	text-align:center;
+	min-width:80px;
+	margin:3px;
+	cursor:pointer;
+}
+
+.ssquiz_ok {
+	margin-bottom: 10px;
+	display: block;
+}
+
+.ssquiz_btn:hover {
+	background:-webkit-gradient( linear, left top, left bottom, color-stop(0.05, #dfdfdf), color-stop(1, #ededed) );
+	background:-moz-linear-gradient( center top, #dfdfdf 5%, #ededed 100% );
+	filter:progid:DXImageTransform.Microsoft.gradient(startColorstr='#dfdfdf', endColorstr='#ededed');
+	background-color:#dfdfdf;
+	text-decoration:none;
+}
+
+.ssquiz_question span {
+	display: inline-block;
+	margin-bottom: 0;
+	margin-left: 15px;
+	vertical-align: middle;
+}
+
+.ssquiz .help-error {
+	color: #B94A48;
+}
+
+.ssquiz .help-wrong {
+	color: #B94A48;
+	font-weight:bold;
+}
+
+.ssquiz .help-ok {
+	color: #468847;
+	font-weight:bold;
+}
+
+.ssquiz input[type="text"] {
+	border: 1px solid #CCC;
+	background-color: #FFF;
+	box-shadow: inset 0 1px 1px rgba(0, 0, 0, 0.075);
+	padding: 4px 6px;
+	width: 206px;
+}
+
+.ssquiz input {
+	display: inline;
+}
+
+.ssquiz label {
+	float: left;
+	width: 100px;
+	padding-top: 5px;
+	padding-right: 20px;
+	text-align: right;
+}
+
+.ssquiz .ssquiz_timer {
+	float: right;
+	top: 5px;
+	right: 10px;
+	position: relative;
+}
+
+.ssquiz .time_alert {
+	color:red;
+}
+
+.ssquiz hr {
+	color: #999;
+}
+
+.ssquiz_finish_btn {
+	color: #FFF;
+	font-size: 13px;
+	font-weight: bold;
+	padding: 10px 18px;
+	border: none;
+	text-shadow: none;
+	border-radius: 3px;
+	-moz-border-radius: 3px;
+	-webkit-border-radius: 3px;
+	background-color: #A84B3A;
+	margin: 0 auto;
+	display: block;
+}
+
+ssquiz_timer img {
+	width: 20px;
+}
+
+.ssquiz_loading {
+	min-height: 200px;
+	position: relative;
+}
+
+.history_list {
+	text-align: center;
+	border-top: 1px solid #999;
+	margin: 15px;
+	padding: 10px;
+}
+
+.history_list > .ssquiz_btn {
+	min-width: 30px;
+}
+
+.history_list > .active {
+	background: none;
+	cursor: default;
+}
+
+.ssquiz .check_img {
+	border-radius: 0px!important;
+	box-shadow: none!important;
+	position: relative;
+	top: 10px;
+	margin-right: 15px;
+}
+
+.ssquiz_timer .check_img {
+	width: 20px;
+	top: 5px;
+	margin-right: 5px;
+	opacity: 0.7;
+}
+
+.ssquiz_loading img{
+	border-radius: 0px!important;
+	box-shadow: none!important;
+	position: relative;
+	position: absolute!important;
+	left: 47%!important;
+	top: 40%!important;
+}
+
+.alert {
+	margin-bottom: 5px;
+	padding: 8px 35px 8px 14px;
+	margin-bottom: 20px;
+	text-shadow: 0 1px 0 rgba(255, 255, 255, 0.5);
+	border: 1px solid #FBEED5;
+	-webkit-border-radius: 4px;
+	-moz-border-radius: 4px;
+	border-radius: 4px;
+}
+.alert-success {
+	color: #468847;
+	background-color: #DFF0D8;
+	border-color: #D6E9C6;
+}
+.alert-error {
+	color: #B94A48;
+	background-color: #F2DEDE;
+	border-color: #EED3D7;
+}
+
+.cf:before, .cf:after {content: " "; /* 1 */ display: table; /* 2 */ }
+.cf:after { clear: both;}
+/**For IE 6/7 only. Include this rule to trigger hasLayout and contain floats.*/
+.cf { *zoom: 1;}
+
+.ssquiz_body .right {
+	background:-webkit-gradient( linear, left top, left bottom, color-stop(0.05, #77d42a), color-stop(1, #5cb811) )!important;
+	background:-moz-linear-gradient( center top, #77d42a 5%, #5cb811 100% )!important;
+	filter:progid:DXImageTransform.Microsoft.gradient(startColorstr='#77d42a', endColorstr='#5cb811')!important;
+	background-color:#77d42a;
+}
+
+.ssquiz_body .wrong {
+	background:-webkit-gradient( linear, left top, left bottom, color-stop(0.05, #fe1a00), color-stop(1, #ce0100) )!important;
+	background:-moz-linear-gradient( center top, #fe1a00 5%, #ce0100 100% )!important;
+	filter:progid:DXImageTransform.Microsoft.gradient(startColorstr='#fe1a00', endColorstr='#ce0100')!important;
+	background-color:#fe1a00;
+}

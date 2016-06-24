@@ -1,0 +1,395 @@
+msgid ""
+msgstr ""
+"Project-Id-Version: \n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2012-11-05 13:15+0330\n"
+"PO-Revision-Date: 2012-11-05 14:24+0330\n"
+"Last-Translator: saeed <dnojad@gmail.com>\n"
+"Language-Team: \n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"X-Poedit-KeywordsList: _;__;__e\n"
+"X-Poedit-Basepath: .\n"
+"X-Poedit-Language: Persian\n"
+"X-Poedit-Country: IRAN, ISLAMIC REPUBLIC OF\n"
+"X-Poedit-SearchPath-0: ..\n"
+
+#: ../admin-side.php:16
+#: ../ssquiz.php:28
+msgid "Quiz's Users"
+msgstr "کاربران آزمون"
+
+#: ../admin-side.php:20
+msgid "Clear this list"
+msgstr "این لیست را پاک کن"
+
+#: ../admin-side.php:25
+#: ../client-side.php:83
+msgid "Name"
+msgstr "نام"
+
+#: ../admin-side.php:26
+#: ../client-side.php:88
+msgid "E-Mail"
+msgstr "رایانامه (ایمیل)"
+
+#: ../admin-side.php:27
+#: ../admin-side.php:192
+msgid "Quiz"
+msgstr "آزمون"
+
+#: ../admin-side.php:28
+msgid "Answered"
+msgstr "پاسخ"
+
+#: ../admin-side.php:29
+msgid "Correct"
+msgstr "صحیح"
+
+#: ../admin-side.php:30
+msgid "Time"
+msgstr "زمان"
+
+#: ../admin-side.php:77
+msgid "ERROR:You should write answer"
+msgstr "خطا : شما باید پاسخ را بنویسید"
+
+#: ../admin-side.php:81
+msgid "ERROR:You should write question"
+msgstr "خطا : شما باید پرسش را بنویسید"
+
+#: ../admin-side.php:85
+msgid "No Quiz selected"
+msgstr "آزمونی انتخاب نشده است"
+
+#: ../admin-side.php:94
+msgid "Error while replacing"
+msgstr "خطا در حال جایگزینی"
+
+#: ../admin-side.php:122
+msgid "ERROR:You should write title"
+msgstr "خطا : شما باید عنوان را بنویسید"
+
+#: ../admin-side.php:126
+msgid "ERROR:You should write description"
+msgstr "خطا : شما باید توضیحاتی را درج کنید."
+
+#: ../admin-side.php:136
+msgid "SSQuiz Manager"
+msgstr "مدیریت آزمون ها"
+
+#: ../admin-side.php:136
+#: ../admin-side.php:150
+#: ../ssquiz.php:63
+msgid "Add Quiz"
+msgstr "افزودن آزمون"
+
+#: ../admin-side.php:141
+msgid "New Quiz's title"
+msgstr "عنوان جدید آزمون"
+
+#: ../admin-side.php:145
+msgid "New Quiz's description"
+msgstr "توضیحات جدید آزمون"
+
+#: ../admin-side.php:156
+msgid "View Quiz"
+msgstr "نمایش آزمون"
+
+#: ../admin-side.php:158
+msgid "All"
+msgstr "همه"
+
+#: ../admin-side.php:193
+msgid "Number"
+msgstr "تعداد"
+
+#: ../admin-side.php:194
+#: ../admin-side.php:463
+#: ../client-side.php:217
+#: ../client-side.php:318
+#: ../client-side.php:410
+msgid "Question"
+msgstr "پرسش ها"
+
+#: ../admin-side.php:195
+msgid "Correct Answer"
+msgstr "پاسخ صحیح"
+
+#: ../admin-side.php:196
+msgid "Answers"
+msgstr "پاسخ"
+
+#: ../admin-side.php:218
+#: ../admin-side.php:220
+msgid "Total questions"
+msgstr "تعداد پرسش ها"
+
+#: ../admin-side.php:218
+#: ../admin-side.php:220
+#: ../admin-side.php:250
+msgid "delete"
+msgstr "حذف"
+
+#: ../admin-side.php:218
+#: ../admin-side.php:220
+#: ../admin-side.php:249
+#: ../ssquiz.php:61
+msgid "edit"
+msgstr "ویرایش"
+
+#: ../admin-side.php:218
+#: ../admin-side.php:220
+#: ../admin-side.php:560
+#: ../admin-side.php:575
+#: ../ssquiz.php:59
+msgid "add question"
+msgstr "افزودن پرسش"
+
+#: ../admin-side.php:303
+#: ../ssquiz.php:29
+msgid "Quiz Templates"
+msgstr "الگوهای آزمون"
+
+#: ../admin-side.php:305
+msgid "Welcome Screen"
+msgstr "صفحه خوش آمدگویی"
+
+#: ../admin-side.php:312
+#: ../admin-side.php:330
+#: ../admin-side.php:351
+#: ../admin-side.php:377
+msgid "Title of the quiz"
+msgstr "عنوان آزمون"
+
+#: ../admin-side.php:313
+#: ../admin-side.php:331
+#: ../admin-side.php:352
+#: ../admin-side.php:378
+msgid "Description of the quiz"
+msgstr "توضیحات آزمون"
+
+#: ../admin-side.php:314
+msgid "Total number of questions"
+msgstr "تعداد پرسش ها"
+
+#: ../admin-side.php:317
+#: ../admin-side.php:337
+#: ../admin-side.php:384
+msgid "Submit"
+msgstr "ثبت"
+
+#: ../admin-side.php:322
+msgid "Result Screen"
+msgstr "صفحه نتایج"
+
+#: ../admin-side.php:328
+#: ../admin-side.php:375
+msgid "User's name"
+msgstr "نام کربران"
+
+#: ../admin-side.php:329
+msgid "Quiz's ID"
+msgstr "  آزمون  ID"
+
+#: ../admin-side.php:332
+msgid "Number of answered questions"
+msgstr "تعداد پرسش های پاسخ داده شده"
+
+#: ../admin-side.php:333
+#: ../admin-side.php:354
+#: ../admin-side.php:380
+msgid "Number of correct answers"
+msgstr "تعداد پاسخ های صحیح"
+
+#: ../admin-side.php:334
+#: ../admin-side.php:355
+#: ../admin-side.php:381
+msgid "Percent of correct answered over total questions"
+msgstr "درصد مجموع پاسخ های درست"
+
+#: ../admin-side.php:342
+msgid "Email Template to user"
+msgstr "الگوی ایمیل ارسالی به کاربران"
+
+#: ../admin-side.php:343
+#: ../admin-side.php:365
+msgid "Subject"
+msgstr "موضوع"
+
+#: ../admin-side.php:348
+msgid "User will receive email?"
+msgstr "کاربر  رایانامه (ایمیل) دریافت کند؟"
+
+#: ../admin-side.php:353
+#: ../admin-side.php:379
+msgid "Number of answered"
+msgstr "تعداد پاسخ داده شده ها"
+
+#: ../admin-side.php:364
+msgid "Teacher's Template"
+msgstr "الگوی معلم"
+
+#: ../admin-side.php:370
+msgid "Teacher's email"
+msgstr "ایمیل معلم"
+
+#: ../admin-side.php:372
+msgid "Teacher will receive email?"
+msgstr "معلم رایانامه دریافت کند؟"
+
+#: ../admin-side.php:376
+msgid "User's email"
+msgstr "رایانانه کاربر"
+
+#: ../admin-side.php:467
+#: ../admin-side.php:563
+msgid "Insert Media"
+msgstr "افزودن رسانه"
+
+#: ../admin-side.php:480
+#: ../admin-side.php:566
+msgid "Answer is"
+msgstr "پاسخ هست"
+
+#: ../admin-side.php:482
+#: ../admin-side.php:569
+msgid "correct"
+msgstr "صحیح"
+
+#: ../admin-side.php:486
+#: ../ssquiz.php:46
+msgid "Add answer"
+msgstr "افزودن پاسخ"
+
+#: ../admin-side.php:497
+msgid "Save"
+msgstr "ذخیره"
+
+#: ../admin-side.php:536
+msgid "Quiz's title"
+msgstr "عنوان آزمون"
+
+#: ../admin-side.php:540
+msgid "Quiz's description"
+msgstr "توضیحات آزمون"
+
+#: ../admin-side.php:584
+msgid "If you have questions, suggestions or want to know about my upcoming projects, visit"
+msgstr "اگر شما پرسش یا پیشنهادی دارید به سایت من سر بزنید"
+
+#: ../client-side.php:10
+msgid "Quiz is not selected! Please, read readme.txt"
+msgstr "آزمون انتخاب نشده است. لطفا فایل README.TEXT را مطالعه کنید"
+
+#: ../client-side.php:55
+msgid "Time left"
+msgstr "زمان باقی مانده"
+
+#: ../client-side.php:67
+msgid "You already took this quiz"
+msgstr "شما این آزمون را گرفته اید"
+
+#: ../client-side.php:95
+msgid "Start"
+msgstr "شروع"
+
+#: ../client-side.php:97
+msgid "Exit"
+msgstr "پایان"
+
+#: ../client-side.php:221
+msgid "Correct answer"
+msgstr "پاسخ صحیح"
+
+#: ../client-side.php:224
+msgid "Your answer"
+msgstr "پاسخ شما"
+
+#: ../client-side.php:226
+msgid "You didn't answer to this question."
+msgstr "شما به این پرسش پاسخ ندادید"
+
+#: ../client-side.php:229
+msgid "You were right!"
+msgstr "پاسخ شما صحیح است"
+
+#: ../client-side.php:249
+msgid "Back"
+msgstr "بازگشت"
+
+#: ../client-side.php:305
+#: ../client-side.php:400
+msgid "There is no tests in quiz"
+msgstr "هیچ پرسشی در آزمون نیست"
+
+#: ../client-side.php:349
+#: ../client-side.php:405
+msgid "Finish"
+msgstr "پایان"
+
+#: ../client-side.php:373
+msgid "Next"
+msgstr "بعدی"
+
+#: ../ssquiz.php:47
+msgid "You must write at least one answer!"
+msgstr "شما باید حداقل یک پاسخ بنویسید!"
+
+#: ../ssquiz.php:48
+msgid "You must choose correct answer!"
+msgstr "شما باید پاسخ صحیح را انتخاب کنید!"
+
+#: ../ssquiz.php:49
+msgid "Question too short!"
+msgstr "پرسش بسیار کوتاه است!"
+
+#: ../ssquiz.php:50
+msgid "You must write title!"
+msgstr "شما باید عنوان را بنویسید!"
+
+#: ../ssquiz.php:51
+msgid "You must write description!"
+msgstr "شما باید توضیحات  را بنویسید!"
+
+#: ../ssquiz.php:52
+msgid "Error"
+msgstr "اخطار"
+
+#: ../ssquiz.php:53
+msgid "Saved"
+msgstr "ذخیره"
+
+#: ../ssquiz.php:54
+msgid "Please fill the forms"
+msgstr "لطفا فرم ها را پر کنید"
+
+#: ../ssquiz.php:55
+msgid "Please input a correct email"
+msgstr "لطفا  رایانامه صحیح وارد نمایید"
+
+#: ../ssquiz.php:56
+msgid "Select Quiz"
+msgstr "آزمون را انتخاب کنیذ"
+
+#: ../ssquiz.php:57
+msgid "Do you really want to delete quiz and all its questions?"
+msgstr "آیا شما می خواهید آزمون را با تمام پرسش ها پاک کنید؟"
+
+#: ../ssquiz.php:58
+msgid "Do you really want to delete all users from SSQuiz's database"
+msgstr "آیا شما می خواهید تمام کاربران را از پایگاه داده پاک کنید؟"
+
+#: ../ssquiz.php:60
+msgid "cancel"
+msgstr "لغو"
+
+#: ../ssquiz.php:62
+msgid "loading"
+msgstr "بارگزاری"
+
+#: ../ssquiz.php:64
+msgid "Another answer is"
+msgstr "پاسخ دیگر"
+
