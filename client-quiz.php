@@ -142,16 +142,21 @@ function ssquiz_response() {
 	// Store Responses
 	$response_store = "Responses";
 	$store = array();
-	if(isset($_COOKIE[$response_store]))
-		$store = unserialize(base64_decode($_COOKIE[$response_store]));
+	if(isset($_COOKIE[$response_store])){
+		$cookie = $_COOKIE[$response_store];
+		if(strlen($cookie) > 3000){
+			checkin_cookie($info->user->id,$info->quiz->id,$info->questions_counter,$cookie);
+			$_COOKIE[$response_store] = '';
+			$store = array();
+		}else
+			$store = unserialize(gzuncompress(base64_decode($cookie)));
+	}
 
 	if(count($status->answers) > 0)
 		$store[] = $status->answers;
 	if(count($store) > 0){
-		setcookie($response_store,base64_encode(serialize($store)),2*DAYS_IN_SECONDS,COOKIEPATH,COOKIE_DOMAIN);
+		setcookie($response_store,base64_encode(gzcompress(serialize($store))),2*DAYS_IN_SECONDS,COOKIEPATH,COOKIE_DOMAIN);
 	}
-	// delete on finish
-	var_dump($store);
 
 	// Restart?
 	if ( true == $status->restart )
@@ -209,15 +214,39 @@ function ssquiz_response() {
 	// finished
 	else{
 		// save responses
+		checkin_cookie($info->user->id,$info->quiz->id,$info->questions_counter + 1, $_COOKIE[$response_store]);
 		// Delete cookie
 		unset($_COOKIE[$response_store]);
-		setcookie($response_store,'',time() - (15*60));
+		setcookie($response_store,'',time() - (15*60),COOKIEPATH);
 		wp_die( ssquiz_finish( $new_screen, $status, $info ) );
 	}
 }
 
 add_action('wp_ajax_nopriv_ssquiz_response', 'ssquiz_response');
 add_action('wp_ajax_ssquiz_response', 'ssquiz_response');
+
+/**
+* To store the responses in the database (Append)
+* @arg  cookie_data The zipped, base64 encoded and serialized cookie data to store
+**/
+function checkin_cookie($user_id,$quiz_id,$offset,$cookie_data){
+	global $wpdb;
+	$response_history = $wpdb->get_var("SELECT response_meta FROM {$wpdb->base_prefix}self_ssquiz_response_history WHERE user_id=$user_id && quiz_id=$quiz_id;");
+	$data = array();
+	$data['question_offset'] = $offset;
+	if($response_history == NULL || $response_history === false){
+		$data['response_meta'] = $cookie_data;
+		$data['user_id'] = $user_id;
+		$data['quiz_id'] = $quiz_id;
+		$wpdb->insert("{$wpdb->base_prefix}self_ssquiz_response_history",$data,array('%d','%s','%d','%d'));
+	} else{
+		$array1 = unserialize(gzuncompress(base64_decode($response_history)));
+		$array2 = unserialize(gzuncompress(base64_decode($cookie_data)));
+		$data['response_meta'] = base64_encode(gzcompress(serialize(array_merge($array1,$array2))));
+		$where = array("user_id"=>$user_id,"quiz_id"=>$quiz_id);
+		$wpdb->update("{$wpdb->base_prefix}self_ssquiz_response_history",$data,$where,array("%d","%s"),array('%d','%d'));
+	}
+}
 
 function ssquiz_check_answers( $number, &$info, &$answers ) {
 	$question = &$info->questions[$number-1];
