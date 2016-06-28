@@ -344,6 +344,17 @@ jQuery(document).ready(function( $ ) {
 		var main = $(this).parents(".ssquiz");
 		var status = $.parseJSON(main.find(".ssquiz_hidden_status").html());
 		var info = main.find(".ssquiz_hidden_info").html();
+
+		// retrieve backup
+		// if(ssquiz_backup.length <= 0){
+		// 	$.post(ssquiz.ajaxurl, {
+		// 		action: "self_ssquiz_get_backup",
+		// 		info: info
+		// 	},function (backup) {
+		// 		ssquiz_backup = $.parseJSON(backup);
+		// 	});
+		// }
+
 		var button = $(this);
 		var temp = true;
 		var temp2 = true;
@@ -378,10 +389,17 @@ jQuery(document).ready(function( $ ) {
 					var status1 = $.parseJSON($(".ssquiz_hidden_status").html());
 					if (status1.results !='0') //!
 						ssquiz_backup[status1.questions_counter] = status1.results;
+
+					// store ssquiz_backup for recording results for each question
+					$.post(ssquiz.ajaxurl, {
+						action: "self_ssquiz_store_backup",
+						info: info,
+						backup: JSON.stringify(ssquiz_backup)
+					});
 				}
 				// about to finish
 				if (status.total_questions == status.questions_counter + 1) {
-					main.find(".ssquiz_exit").css('display', 'none');
+					//main.find(".ssquiz_exit").css('display', 'none');
 					button.html(ssquiz.finish);
 				// not finishing
 				} else {

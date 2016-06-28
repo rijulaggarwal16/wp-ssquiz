@@ -93,11 +93,22 @@ function ssquiz_start( $params ) {
 	ssquiz_tag_replace($start_screen, $info, 'start');
 
 	$status->total_questions = $info->total_questions;
-	$status->questions_counter = 0;
-	$info->questions_counter = 0;
-	$info->questions_right = 0;
-	$info->just_started = true;
-	$status->just_started = true;
+
+	// Resuming quiz
+	$quiz_history = $wpdb->get_row("SELECT * FROM {$wpdb->base_prefix}self_ssquiz_response_history WHERE user_id={$info->user->id} && quiz_id={$info->quiz->id};");
+	if(null == $quiz_history){
+		$status->questions_counter = 0;
+		$info->questions_counter = 0;
+		$info->questions_right = 0;
+		$info->just_started = true;
+		$status->just_started = true;
+	} else{
+		$status->questions_counter = $quiz_history->question_offset;
+		$info->questions_counter = $quiz_history->question_offset;
+		$info->questions_right = $quiz_history->questions_right;
+		$info->just_started = false;
+		$status->just_started = false;
+	}
 			
 	// if logged in fill the input
 	if ( $info->name ) {
@@ -124,7 +135,7 @@ function ssquiz_start( $params ) {
 
 	$footer = '
 		<button class="ssquiz_ok ssquiz_btn">' . __("Start", 'ssquiz') . '</button>
-		<button class="ssquiz_exit ssquiz_btn" style="display: none;">' . __("Exit", 'ssquiz') . '</button>';
+		<button class="ssquiz_exit ssquiz_btn" style="display: none;">' .'Save & Exit' . '</button>';
 
 	$header = '<h2>'. $info->quiz->name .'</h2>';
 	if ( isset( $info->timer ) ) {
@@ -133,6 +144,25 @@ function ssquiz_start( $params ) {
 	}
 
 	return ssquiz_return_quiz_body( $header, ssquiz_add_hidden($start_screen, $status, $info ), $footer );
+}
+
+// Will be executed after cookie data is successfully stored in DB
+function self_ssquiz_store_backup(){
+	$info = unserialize( gzuncompress( base64_decode( $_REQUEST['info'] )  ));
+	echo "dammit";
+	$data['result_backup'] =  $_REQUEST['backup'] ;
+	$where = array("user_id"=>$info->user->id,"quiz_id"=>$info->quiz->id);
+	$wpdb->update("{$wpdb->base_prefix}self_ssquiz_response_history",$data,$where,array("%s"),array('%d','%d'));
+}
+
+function self_ssquiz_get_backup(){
+	$info = unserialize( gzuncompress( base64_decode( $_REQUEST['info'] )  ));
+	$result_backup = $wpdb->get_var("SELECT result_backup FROM {$wpdb->base_prefix}self_ssquiz_response_history WHERE user_id={$info->user->id} && quiz_id={$info->quiz->id};");
+	if(NULL == $result_backup || $result_backup === false){
+		$emptyArray = [];
+		$result_backup = json_encode($emptyArray);
+	}
+	return $result_backup;
 }
 
 function ssquiz_response() {
@@ -145,7 +175,7 @@ function ssquiz_response() {
 	if(isset($_COOKIE[$response_store])){
 		$cookie = $_COOKIE[$response_store];
 		if(strlen($cookie) > 3000){
-			checkin_cookie($info->user->id,$info->quiz->id,$info->questions_counter,$cookie);
+			checkin_cookie($info,$cookie);
 			$_COOKIE[$response_store] = '';
 			$store = array();
 		}else
@@ -214,7 +244,7 @@ function ssquiz_response() {
 	// finished
 	else{
 		// save responses
-		checkin_cookie($info->user->id,$info->quiz->id,$info->questions_counter + 1, $_COOKIE[$response_store]);
+		checkin_cookie($info, $_COOKIE[$response_store]);
 		// Delete cookie
 		unset($_COOKIE[$response_store]);
 		setcookie($response_store,'',time() - (15*60),COOKIEPATH);
@@ -229,21 +259,22 @@ add_action('wp_ajax_ssquiz_response', 'ssquiz_response');
 * To store the responses in the database (Append)
 * @arg  cookie_data The zipped, base64 encoded and serialized cookie data to store
 **/
-function checkin_cookie($user_id,$quiz_id,$offset,$cookie_data){
+function checkin_cookie($info,$cookie_data){
 	global $wpdb;
-	$response_history = $wpdb->get_var("SELECT response_meta FROM {$wpdb->base_prefix}self_ssquiz_response_history WHERE user_id=$user_id && quiz_id=$quiz_id;");
+	$response_history = $wpdb->get_var("SELECT response_meta FROM {$wpdb->base_prefix}self_ssquiz_response_history WHERE user_id={$info->user->id} && quiz_id={$info->quiz->id};");
 	$data = array();
-	$data['question_offset'] = $offset;
+	$data['question_offset'] = $info->questions_counter - 1;
+	$data['questions_right'] = $info->questions_right;
 	if($response_history == NULL || $response_history === false){
 		$data['response_meta'] = $cookie_data;
-		$data['user_id'] = $user_id;
-		$data['quiz_id'] = $quiz_id;
+		$data['user_id'] = $info->user->id;
+		$data['quiz_id'] = $info->quiz->id;
 		$wpdb->insert("{$wpdb->base_prefix}self_ssquiz_response_history",$data,array('%d','%s','%d','%d'));
 	} else{
 		$array1 = unserialize(gzuncompress(base64_decode($response_history)));
 		$array2 = unserialize(gzuncompress(base64_decode($cookie_data)));
 		$data['response_meta'] = base64_encode(gzcompress(serialize(array_merge($array1,$array2))));
-		$where = array("user_id"=>$user_id,"quiz_id"=>$quiz_id);
+		$where = array("user_id"=>$info->user->id,"quiz_id"=>$info->quiz->id);
 		$wpdb->update("{$wpdb->base_prefix}self_ssquiz_response_history",$data,$where,array("%d","%s"),array('%d','%d'));
 	}
 }
