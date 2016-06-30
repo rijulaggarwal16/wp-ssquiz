@@ -148,22 +148,28 @@ function ssquiz_start( $params ) {
 
 // Will be executed after cookie data is successfully stored in DB
 function self_ssquiz_store_backup(){
+	global $wpdb;
 	$info = unserialize( gzuncompress( base64_decode( $_REQUEST['info'] )  ));
-	echo "dammit";
 	$data['result_backup'] =  $_REQUEST['backup'] ;
 	$where = array("user_id"=>$info->user->id,"quiz_id"=>$info->quiz->id);
 	$wpdb->update("{$wpdb->base_prefix}self_ssquiz_response_history",$data,$where,array("%s"),array('%d','%d'));
+	wp_die();
 }
 
+add_action('wp_ajax_self_ssquiz_store_backup', 'self_ssquiz_store_backup');
+
 function self_ssquiz_get_backup(){
+	global $wpdb;
 	$info = unserialize( gzuncompress( base64_decode( $_REQUEST['info'] )  ));
 	$result_backup = $wpdb->get_var("SELECT result_backup FROM {$wpdb->base_prefix}self_ssquiz_response_history WHERE user_id={$info->user->id} && quiz_id={$info->quiz->id};");
 	if(NULL == $result_backup || $result_backup === false){
-		$emptyArray = [];
-		$result_backup = json_encode($emptyArray);
+		$result_backup = json_encode(array());
 	}
-	return $result_backup;
+	echo $result_backup;
+	wp_die();
 }
+
+add_action('wp_ajax_self_ssquiz_get_backup', 'self_ssquiz_get_backup');
 
 function ssquiz_response() {
 	$info = unserialize( gzuncompress( base64_decode( $_REQUEST['info'] )  ));
