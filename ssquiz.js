@@ -346,12 +346,13 @@ jQuery(document).ready(function( $ ) {
 		var info = main.find(".ssquiz_hidden_info").html();
 
 		// retrieve backup
-		if(ssquiz_backup.length <= 0){
+		if(ssquiz_backup.length === 0){
 			$.post(ssquiz.ajaxurl, {
 				action: "self_ssquiz_get_backup",
 				info: info
 			},function (backup) {
-				ssquiz_backup = $.parseJSON(backup);
+				if($.parseJSON(backup).length > 0)
+					ssquiz_backup = $.parseJSON(backup);
 			});
 		}
 

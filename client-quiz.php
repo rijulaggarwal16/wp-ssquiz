@@ -165,7 +165,7 @@ function self_ssquiz_get_backup(){
 	if(NULL == $result_backup || $result_backup === false){
 		$result_backup = json_encode(array());
 	}
-	echo $result_backup;
+	echo stripslashes($result_backup);
 	wp_die();
 }
 
