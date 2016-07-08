@@ -32,7 +32,7 @@ jQuery(document).ready(function( $ ) {
 
 	function quiz_data( subject, state, object, id ) {
 		if ( subject == 'quiz' ) {
-			switchEditors.switchto( document.getElementById("description-tmce") );
+			//switchEditors.switchto( document.getElementById("description-tmce") );
 			if ( state == 'add') {
 				quiz_data( subject, 'clear', object, id );
 			}
@@ -82,7 +82,7 @@ jQuery(document).ready(function( $ ) {
 				$("#ssquiz_quiz_modal .modal_title").html(ssquiz.edit_quiz);
 			}
 		} else { //question
-			switchEditors.switchto( document.getElementById("ssquiz_question-tmce") );
+			//switchEditors.switchto( document.getElementById("ssquiz_question-tmce") );
 			if ( state == 'add') {
 				quiz_data( 'question', 'clear' );
 				$('.ssquiz_add_answer').trigger('click');
@@ -404,13 +404,8 @@ jQuery(document).ready(function( $ ) {
 					button.html(ssquiz.finish);
 				// not finishing
 				} else {
-					if ( status.all_at_once ) {
-						main.find(".ssquiz_exit").css('display', 'inline-block').html(ssquiz.finish);
-						main.find(".ssquiz_ok").hide();
-					} else {
-						main.find(".ssquiz_exit").css('display', 'inline-block');
-						main.find(".ssquiz_ok").html(ssquiz.next);
-					}
+					main.find(".ssquiz_exit").css('display', 'inline-block');
+					main.find(".ssquiz_ok").html(ssquiz.next);
 				}
 				main.find(".ssquiz_body").fadeIn(100, function(){ button.removeAttr("disabled"); });
 			});
