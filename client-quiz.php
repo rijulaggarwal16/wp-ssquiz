@@ -33,6 +33,9 @@ function ssquiz_start( $params ) {
 	$info = new stdClass();
 	$status = new stdClass();
 
+	$info->paging = 10;
+	$info->current_page = 1;
+	$status->paging = $info->paging;
 	$info->params = $params;
 	
 	foreach ($params as $name)
@@ -230,10 +233,19 @@ function ssquiz_response() {
 		}
 	}
 	if ( false == $status->finished ) {
-		if( ! $info->all ) {
+		if( ! $info->all && $info->paging <= 0 ) {
 			$new_screen .= ssquiz_print_question( $info->questions[$info->questions_counter], $info );
 			$type = $info->questions[$info->questions_counter]->type;
 			$info->questions_counter++;
+		}
+		else if($info->paging > 0){	// paging of questions
+			for($i = $info->questions_counter; $i < $info->current_page*$info->paging && $i < $info->total_questions; $i++){
+				$new_screen .= ssquiz_print_question( $info->questions[$i], $info );
+				$info->questions_counter++;
+				if ( $info->questions_counter != $info->total_questions )
+					$new_screen .= '<hr />';
+			}
+			$info->current_page++;
 		}
 		else { // print all questions at once
 			foreach ($info->questions as $question) {

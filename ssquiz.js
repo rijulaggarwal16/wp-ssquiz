@@ -399,13 +399,18 @@ jQuery(document).ready(function( $ ) {
 					});
 				}
 				// about to finish
-				if (status.total_questions == status.questions_counter + 1) {
+				if (status.total_questions <= status.questions_counter + status.paging) {
 					//main.find(".ssquiz_exit").css('display', 'none');
 					button.html(ssquiz.finish);
 				// not finishing
 				} else {
-					main.find(".ssquiz_exit").css('display', 'inline-block');
-					main.find(".ssquiz_ok").html(ssquiz.next);
+					if ( status.all_at_once ) {
+						main.find(".ssquiz_exit").css('display', 'inline-block').html(ssquiz.finish);
+						main.find(".ssquiz_ok").hide();
+					} else {
+						main.find(".ssquiz_exit").css('display', 'inline-block');
+						main.find(".ssquiz_ok").html(ssquiz.next);
+					}
 				}
 				main.find(".ssquiz_body").fadeIn(100, function(){ button.removeAttr("disabled"); });
 			});
