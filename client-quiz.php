@@ -216,11 +216,26 @@ function ssquiz_response() {
 	}
 	// Checking
 	else {
-		if( ! $info->all ) {
+		if( ! $info->all && $info->paging <= 1 ) {
 			$temp = ssquiz_check_answers( $info->questions_counter, $info, $status->answers);
 			if( $info->show_correct )
 			$new_screen .= $temp;
 			$status->results = $info->results;
+		}
+		else if(! $info->all && $info->paging > 1){	// paging of questions
+			$status->results = '';
+			$i = ($info->current_page-2)*$info->paging;
+			$answerIndex = 0;
+			for ( ; $i < ($info->current_page-1)*$info->paging && $i < $info->total_questions; $i++ ) {
+				$question = $info->questions[$i];
+				$temp = array();
+				for ( $j = 0; $j < count( $question->answers ); $j++ ) {
+					$temp[] = $status->answers[$answerIndex];
+					$answerIndex++;
+				}
+				ssquiz_check_answers( $i+1, $info, $temp );
+				$status->results .= $info->results;
+			}
 		}
 		else { // check all questions
 			$status->results = '';
@@ -233,12 +248,12 @@ function ssquiz_response() {
 		}
 	}
 	if ( false == $status->finished ) {
-		if( ! $info->all && $info->paging <= 0 ) {
+		if( ! $info->all && $info->paging <= 1 ) {
 			$new_screen .= ssquiz_print_question( $info->questions[$info->questions_counter], $info );
 			$type = $info->questions[$info->questions_counter]->type;
 			$info->questions_counter++;
 		}
-		else if($info->paging > 0){	// paging of questions
+		else if(! $info->all && $info->paging > 1){	// paging of questions
 			for($i = $info->questions_counter; $i < $info->current_page*$info->paging && $i < $info->total_questions; $i++){
 				$new_screen .= ssquiz_print_question( $info->questions[$i], $info );
 				$info->questions_counter++;
