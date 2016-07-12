@@ -420,9 +420,11 @@ function ssquiz_finish( &$finish_screen, &$status, &$info ) {
 		} 
 		else {
 			echo '<h4 style="margin: 7px;">' . __("Answered questions") . '</h4>';
+			$tempPageNum = 1;
 			for ( $i = 0; $i < $info->questions_counter; $i++ ) {
 				$temp = ( true == $info->questions[$i]->correct ) ? 'alert-success' : 'alert-error';
-				echo "<a href='#' id='ssquiz_$i' class='ssquiz_btn $temp' onclick='jQuery.fn.history_walk($i);return false;'>". ( $i + 1 ) ."</a>";
+				if($i >= $info->total_questions - (($info->total_questions-1)/$info->paging)-1)
+					echo "<a href='#' id='ssquiz_$i' class='ssquiz_btn $temp' onclick='jQuery.fn.history_walk($i);return false;'>". ( $tempPageNum++ ) ."</a>";
 			}
 		}
 		echo "<div>
