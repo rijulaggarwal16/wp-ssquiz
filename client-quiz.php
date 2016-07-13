@@ -33,6 +33,7 @@ function ssquiz_start( $params ) {
 	$info = new stdClass();
 	$status = new stdClass();
 
+	// Paging Settings
 	$info->paging = 10;
 	$info->current_page = 1;
 	$status->paging = $info->paging;
@@ -109,6 +110,8 @@ function ssquiz_start( $params ) {
 		$status->questions_counter = $quiz_history->question_offset;
 		$info->questions_counter = $quiz_history->question_offset;
 		$info->questions_right = $quiz_history->questions_right;
+		$info->current_page = $quiz_history->page_offset;
+		$info->page_answers = json_decode(base64_decode( $quiz_history->page_responses ));
 		$info->just_started = false;
 		$status->just_started = false;
 	}
@@ -178,8 +181,26 @@ function ssquiz_response() {
 	$info = unserialize( gzuncompress( base64_decode( $_REQUEST['info'] )  ));
 	$status = json_decode( stripslashes( $_REQUEST['status'] ) );
 
-	// Store Responses
-	$response_store = "Responses";
+	// Store recent respponses
+	$recent_answers = "";
+	if($status->answers != null && count($status->answers) > 0){
+		$i = ($info->current_page-2)*$info->paging;
+		$answerIndex = 0;
+		$grouped_answers = array();
+		for ( ; $i < ($info->current_page-1)*$info->paging && $i < $info->total_questions; $i++ ) {
+			$question = $info->questions[$i];
+			$temp = array();
+			for ( $j = 0; $j < count( $question->answers ); $j++ ) {
+				$temp[] = $status->answers[$answerIndex];
+				$answerIndex++;
+			}
+			$grouped_answers[] = $temp;
+		}
+		$recent_answers = base64_encode(json_encode($grouped_answers));
+	}
+
+	// Store All Responses
+	$response_store = "responses";
 	$store = array();
 	if(isset($_COOKIE[$response_store])){
 		$cookie = $_COOKIE[$response_store];
@@ -249,22 +270,29 @@ function ssquiz_response() {
 	}
 	if ( false == $status->finished ) {
 		if( ! $info->all && $info->paging <= 1 ) {
-			$new_screen .= ssquiz_print_question( $info->questions[$info->questions_counter], $info );
+			$new_screen .= ssquiz_print_question( $info->questions[$info->questions_counter], $info, array() );
 			$type = $info->questions[$info->questions_counter]->type;
 			$info->questions_counter++;
 		}
 		else if(! $info->all && $info->paging > 1){	// paging of questions
+			$index = 0;
 			for($i = $info->questions_counter; $i < $info->current_page*$info->paging && $i < $info->total_questions; $i++){
-				$new_screen .= ssquiz_print_question( $info->questions[$i], $info );
+				if($info->page_answers == null || count($info->page_answers) <= 0)
+					$new_screen .= ssquiz_print_question( $info->questions[$i], $info, array() );
+				else{
+					$new_screen .= ssquiz_print_question( $info->questions[$i], $info, $info->page_answers[$index] );
+					$index++;
+				}
 				$info->questions_counter++;
 				if ( $info->questions_counter != $info->total_questions )
 					$new_screen .= '<hr />';
 			}
+			$info->page_answers = array();
 			$info->current_page++;
 		}
 		else { // print all questions at once
 			foreach ($info->questions as $question) {
-				$new_screen .= ssquiz_print_question( $question, $info );
+				$new_screen .= ssquiz_print_question( $question, $info, array() );
 				$info->questions_counter++;
 				if ( $info->questions_counter != $info->total_questions )
 					$new_screen .= '<hr />';
@@ -278,7 +306,9 @@ function ssquiz_response() {
 	else{
 		// save responses
 		checkin_cookie($info, $_COOKIE[$response_store]);
-		// Delete cookie
+		// save current page (After saving all responses as it generates user_id,quiz_id mapping)
+		checkin_current_responses($info, $recent_answers);
+		// Delete cookies
 		unset($_COOKIE[$response_store]);
 		setcookie($response_store,'',time() - (15*60),COOKIEPATH);
 		wp_die( ssquiz_finish( $new_screen, $status, $info ) );
@@ -288,27 +318,37 @@ function ssquiz_response() {
 add_action('wp_ajax_nopriv_ssquiz_response', 'ssquiz_response');
 add_action('wp_ajax_ssquiz_response', 'ssquiz_response');
 
+function checkin_current_responses($info,$cookie_data){
+	global $wpdb;
+	$data['page_responses'] = $cookie_data;
+	$where = array("user_id"=>$info->user->id,"quiz_id"=>$info->quiz->id);
+	$wpdb->update("{$wpdb->base_prefix}self_ssquiz_response_history",$data,$where,array("%s"),array('%d','%d'));
+}
+
 /**
 * To store the responses in the database (Append)
 * @arg  cookie_data The zipped, base64 encoded and serialized cookie data to store
 **/
 function checkin_cookie($info,$cookie_data){
 	global $wpdb;
+	if($cookie_data == null)
+		return;
 	$response_history = $wpdb->get_var("SELECT response_meta FROM {$wpdb->base_prefix}self_ssquiz_response_history WHERE user_id={$info->user->id} && quiz_id={$info->quiz->id};");
 	$data = array();
-	$data['question_offset'] = $info->questions_counter - 1;
+	$data['question_offset'] = ($info->current_page-2)*$info->paging;
+	$data['page_offset'] = $info->current_page-1;
 	$data['questions_right'] = $info->questions_right;
 	if($response_history == NULL || $response_history === false){
 		$data['response_meta'] = $cookie_data;
 		$data['user_id'] = $info->user->id;
 		$data['quiz_id'] = $info->quiz->id;
-		$wpdb->insert("{$wpdb->base_prefix}self_ssquiz_response_history",$data,array('%d','%s','%d','%d'));
+		$wpdb->insert("{$wpdb->base_prefix}self_ssquiz_response_history",$data,array('%d','%d','%d','%s','%d','%d'));
 	} else{
 		$array1 = unserialize(gzuncompress(base64_decode($response_history)));
 		$array2 = unserialize(gzuncompress(base64_decode($cookie_data)));
 		$data['response_meta'] = base64_encode(gzcompress(serialize(array_merge($array1,$array2))));
 		$where = array("user_id"=>$info->user->id,"quiz_id"=>$info->quiz->id);
-		$wpdb->update("{$wpdb->base_prefix}self_ssquiz_response_history",$data,$where,array("%d","%s"),array('%d','%d'));
+		$wpdb->update("{$wpdb->base_prefix}self_ssquiz_response_history",$data,$where,array("%d","%d","%d","%s"),array('%d','%d'));
 	}
 }
 
@@ -368,7 +408,7 @@ function ssquiz_check_answers( $number, &$info, &$answers ) {
 	return $temp;
 }
 
-function ssquiz_print_question( &$current_question, &$info ) { 
+function ssquiz_print_question( &$current_question, &$info, $page_responses = array() ) { 
 	ob_start();
 	$number = $info->questions_counter + 1;
 	echo '<div class="ssquiz_question">';
@@ -376,7 +416,8 @@ function ssquiz_print_question( &$current_question, &$info ) {
 	echo apply_filters( 'the_content', $current_question->question );
 	
 	if ( $current_question->type == 'fill' ) {
-		$input = '<input type="text" name="ssquiz_answer" class="ssquiz_answer" value="" style="width: 130px;" />';
+		$pre_answer = count($page_responses)>0?$page_responses[0]->answer:'';
+		$input = '<input type="text" name="ssquiz_answer" class="ssquiz_answer" value="'.$pre_answer.'" style="width: 130px;" />';
 			echo $input . '</br>';
 		$run_js = '<script>jQuery.fn.run_standard_types();</script>';
 	}
@@ -384,11 +425,12 @@ function ssquiz_print_question( &$current_question, &$info ) {
 		if( true == $info->arandom )
 			shuffle($current_question->answers);
 		foreach ( $current_question->answers as $answer ) {
+			$pre_answer = isChecked($answer->answer, $page_responses)?'checked="checked"':'';
 			if ($current_question->type == 'single' )
-				echo '<input type="radio" name="ssquiz_answer'.$number.'" class="ssquiz_answer" /><span class="ssquiz_answer_span">'
+				echo '<input type="radio" name="ssquiz_answer'.$number.'" class="ssquiz_answer" '.$pre_answer.' /><span class="ssquiz_answer_span">'
 					. $answer->answer . '</span></br>';
 			else
-				echo '<input type="checkbox" name="ssquiz_answer'.$number.'" class="ssquiz_answer" /><span class="ssquiz_answer_span">'
+				echo '<input type="checkbox" name="ssquiz_answer'.$number.'" class="ssquiz_answer" '.$pre_answer.' /><span class="ssquiz_answer_span">'
 					. $answer->answer . '</span></br>';
 		}
 		$run_js = '<script>jQuery.fn.run_standard_types();</script>';
@@ -400,6 +442,14 @@ function ssquiz_print_question( &$current_question, &$info ) {
 	$output = ob_get_contents();
 	ob_end_clean();
 	return $output;
+}
+
+function isChecked($answer_value, $history_answers){
+	foreach($history_answers as $answer){
+		if(strcmp($answer_value, $answer->answer) == 0)
+			return $answer->correct;
+	}
+	return false;
 }
 
 function ssquiz_finish( &$finish_screen, &$status, &$info ) {
