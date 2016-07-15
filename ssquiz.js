@@ -360,11 +360,15 @@ jQuery(document).ready(function( $ ) {
 		var temp = true;
 		var temp2 = true;
 		status.answers = answers;
+		if(button.hasClass("ssquiz_exit"))
+			status.exit = true;
 		if ( status.just_started )
 			temp = start_quiz( main, status );
 		else {
-			if (status.results !='0')
-				ssquiz_backup[status.questions_counter-1] = status.results;
+			if (status.results != null && status.results !='0' && !status.resuming)
+				ssquiz_backup[status.current_page-2] = status.results;
+			else if(status.results != null && status.results !='0')
+				status.resuming = false;
 			delete status.results;
 			temp2 = check_answers( main, status );
 		}
@@ -373,7 +377,7 @@ jQuery(document).ready(function( $ ) {
 		status.just_started = false;
 
 		button.attr("disabled", "disabled");
-		if ((status.total_questions == status.questions_counter) || button.hasClass("ssquiz_exit"))
+		if ((status.total_questions == status.questions_counter) || status.exit)
 			status.finished = true;
 	
 		$.post(ssquiz.ajaxurl, {
@@ -388,8 +392,8 @@ jQuery(document).ready(function( $ ) {
 					main.find(".ssquiz_ok, .ssquiz_exit").remove();
 					$('<div class="ssquiz_history"></div>').insertBefore(main.find(".history_list"));
 					var status1 = $.parseJSON($(".ssquiz_hidden_status").html());
-					if (status1.results !='0') //!
-						ssquiz_backup[status1.questions_counter] = status1.results;
+					if (status1.results != null && status1.results !='0' && !status.exit) //!
+						ssquiz_backup[status1.current_page-1] = status1.results;
 
 					// store ssquiz_backup for recording results for each question
 					$.post(ssquiz.ajaxurl, {
@@ -400,7 +404,7 @@ jQuery(document).ready(function( $ ) {
 				}
 				// about to finish
 				if (status.total_questions <= status.questions_counter + status.paging) {
-					//main.find(".ssquiz_exit").css('display', 'none');
+					main.find(".ssquiz_exit").css('display', 'inline-block');
 					button.html(ssquiz.finish);
 				// not finishing
 				} else {
@@ -430,7 +434,7 @@ jQuery(document).ready(function( $ ) {
 			$(".alert, .ssquiz_get_results, .ssquiz_finish, .history_list h4").hide();
 			$(".history_list .ssquiz_btn").show();
 			$(".history_list > a[id='ssquiz_"+number+"']").addClass('active');
-			$(".ssquiz_history").html(ssquiz_backup[number+1].replace(/&amp;/g, "&").replace(/&lt;/g, "<").replace(/&gt;/g, ">"));
+			$(".ssquiz_history").html(ssquiz_backup[number].replace(/&amp;/g, "&").replace(/&lt;/g, "<").replace(/&gt;/g, ">"));
 		}
 	}
 

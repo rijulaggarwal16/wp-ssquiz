@@ -106,6 +106,8 @@ function ssquiz_start( $params ) {
 		$info->questions_right = 0;
 		$info->just_started = true;
 		$status->just_started = true;
+		$status->resuming = false;
+		$status->current_page = $info->current_page; 
 	} else{
 		$status->questions_counter = $quiz_history->question_offset;
 		$info->questions_counter = $quiz_history->question_offset;
@@ -114,7 +116,10 @@ function ssquiz_start( $params ) {
 		$info->page_answers = json_decode(base64_decode( $quiz_history->page_responses ));
 		$info->just_started = false;
 		$status->just_started = false;
+		$status->resuming = true;
+		$status->current_page = $info->current_page;
 	}
+	$status->exit = false;
 			
 	// if logged in fill the input
 	if ( $info->name ) {
@@ -212,7 +217,7 @@ function ssquiz_response() {
 			$store = unserialize(gzuncompress(base64_decode($cookie)));
 	}
 
-	if(count($status->answers) > 0)
+	if(count($status->answers) > 0 && !$status->exit)
 		$store[] = $status->answers;
 	if(count($store) > 0){
 		setcookie($response_store,base64_encode(gzcompress(serialize($store))),2*DAYS_IN_SECONDS,COOKIEPATH,COOKIE_DOMAIN);
@@ -289,6 +294,7 @@ function ssquiz_response() {
 			}
 			$info->page_answers = array();
 			$info->current_page++;
+			$status->current_page = $info->current_page;
 		}
 		else { // print all questions at once
 			foreach ($info->questions as $question) {
@@ -305,7 +311,7 @@ function ssquiz_response() {
 	// finished
 	else{
 		// save responses
-		checkin_cookie($info, $_COOKIE[$response_store]);
+		checkin_cookie($info, base64_encode(gzcompress(serialize($store))));
 		// save current page (After saving all responses as it generates user_id,quiz_id mapping)
 		checkin_current_responses($info, $recent_answers);
 		// Delete cookies
@@ -471,10 +477,11 @@ function ssquiz_finish( &$finish_screen, &$status, &$info ) {
 		else {
 			echo '<h4 style="margin: 7px;">' . __("Answered questions") . '</h4>';
 			$tempPageNum = 1;
-			for ( $i = 0; $i < $info->questions_counter; $i++ ) {
+			$max_count_limit = $status->exit?$info->questions_counter-1:$info->questions_counter;
+			for ( $i = 0; $i < $max_count_limit; $i++ ) {
 				$temp = ( true == $info->questions[$i]->correct ) ? 'alert-success' : 'alert-error';
 				if($i >= $info->total_questions - (($info->total_questions-1)/$info->paging)-1)
-					echo "<a href='#' id='ssquiz_$i' class='ssquiz_btn $temp' onclick='jQuery.fn.history_walk($i);return false;'>". ( $tempPageNum++ ) ."</a>";
+					echo "<a href='#' id='ssquiz_$tempPageNum' class='ssquiz_btn $temp' onclick='jQuery.fn.history_walk($tempPageNum);return false;'>". ( $tempPageNum++ ) ."</a>";
 			}
 		}
 		echo "<div>
