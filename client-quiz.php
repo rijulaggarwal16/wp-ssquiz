@@ -161,7 +161,7 @@ function ssquiz_start( $params ) {
 function self_ssquiz_store_backup(){
 	global $wpdb;
 	$info = unserialize( gzuncompress( base64_decode( $_REQUEST['info'] )  ));
-	$data['result_backup'] =  $_REQUEST['backup'] ;
+	$data['result_backup'] = base64_encode(gzcompress($_REQUEST['backup'])) ;
 	$where = array("user_id"=>$info->user->id,"quiz_id"=>$info->quiz->id);
 	$wpdb->update("{$wpdb->base_prefix}self_ssquiz_response_history",$data,$where,array("%s"),array('%d','%d'));
 	wp_die();
@@ -174,9 +174,9 @@ function self_ssquiz_get_backup(){
 	$info = unserialize( gzuncompress( base64_decode( $_REQUEST['info'] )  ));
 	$result_backup = $wpdb->get_var("SELECT result_backup FROM {$wpdb->base_prefix}self_ssquiz_response_history WHERE user_id={$info->user->id} && quiz_id={$info->quiz->id};");
 	if(NULL == $result_backup || $result_backup === false){
-		$result_backup = json_encode(array());
-	}
-	echo stripslashes($result_backup);
+		echo json_encode(array());
+	} else
+		echo stripslashes(gzuncompress(base64_decode($result_backup)));
 	wp_die();
 }
 
@@ -186,7 +186,7 @@ function ssquiz_response() {
 	$info = unserialize( gzuncompress( base64_decode( $_REQUEST['info'] )  ));
 	$status = json_decode( stripslashes( $_REQUEST['status'] ) );
 
-	// Store recent respponses
+	// Store recent responses
 	$recent_answers = "";
 	if($status->answers != null && count($status->answers) > 0){
 		$i = ($info->current_page-2)*$info->paging;
@@ -241,7 +241,7 @@ function ssquiz_response() {
 		$info->just_started = false;
 	}
 	// Checking
-	else {
+	else if(false == $status->resuming){
 		if( ! $info->all && $info->paging <= 1 ) {
 			$temp = ssquiz_check_answers( $info->questions_counter, $info, $status->answers);
 			if( $info->show_correct )
@@ -272,6 +272,8 @@ function ssquiz_response() {
 					$status->results .= '<hr />';
 			}
 		}
+	} else{
+		$status->results = '';
 	}
 	if ( false == $status->finished ) {
 		if( ! $info->all && $info->paging <= 1 ) {
@@ -377,7 +379,7 @@ function ssquiz_check_answers( $number, &$info, &$answers ) {
 			$correct = false;
 		}
 	}
-	if( $question->type == 'single' || $question->type == 'multi' ) {
+	else if( $question->type == 'single' || $question->type == 'multi' ) {
 		for ( $i = 0; $i < count( $question->answers ); $i++ ) {
 			if ( true == $question->answers[$i]->correct )
 				if( true == $answers[$i]->correct )
@@ -462,9 +464,15 @@ function ssquiz_finish( &$finish_screen, &$status, &$info ) {
 	global $wpdb;
 	$settings = get_option( 'ssquiz_settings' );
 	
-	$finish_screen .= '<div class="ssquiz_finish">' . $settings->finish_template;
-	ssquiz_tag_replace($finish_screen, $info, 'finish');
-	$finish_screen .= '</div>';
+	if($status->exit){
+		$finish_screen .= '<div class="ssquiz_finish">';
+		$finish_screen .= '<h2>Your progress has been successfully saved! You can return back and continue later.</h2>';
+		$finish_screen .= '</div>';
+	}else{
+		$finish_screen .= '<div class="ssquiz_finish">' . $settings->finish_template;
+		ssquiz_tag_replace($finish_screen, $info, 'finish');
+		$finish_screen .= '</div>';
+	}
 	
 	ob_start();
 	if ( ! isset ( $info->not_correct ) && $info->questions_counter > 0 ) {

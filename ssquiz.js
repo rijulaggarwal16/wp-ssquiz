@@ -341,6 +341,7 @@ jQuery(document).ready(function( $ ) {
 	}
 	
 	$(document).delegate(".ssquiz_ok, .ssquiz_exit", "click", function () {
+		getAnswers();
 		var main = $(this).parents(".ssquiz");
 		var status = $.parseJSON(main.find(".ssquiz_hidden_status").html());
 		var info = main.find(".ssquiz_hidden_info").html();
@@ -540,6 +541,19 @@ jQuery(document).ready(function( $ ) {
 		});
 		
 		$(".ssquiz_answer").change(function () {
+			getAnswers();
+		})
+
+		setTimeout(function () {
+			$('.ssquiz_answer[type="text"]').on("keydown", function(event){
+				if (event.keyCode == 13)
+					$(this).parents(".ssquiz").find(".ssquiz_ok").click();
+			})
+			.first().focus();
+		}, 100);
+	}
+	
+	function getAnswers(){
 			$(".ssquiz_answer").each(function (i) {
 				answers[i] = new Object();
 				if( $(this).attr('type') == 'text' )
@@ -549,13 +563,5 @@ jQuery(document).ready(function( $ ) {
 					answers[i].correct = $(this).is(':checked');
 				}
 			});
-		})
-		setTimeout(function () {
-			$('.ssquiz_answer[type="text"]').on("keydown", function(event){
-				if (event.keyCode == 13)
-					$(this).parents(".ssquiz").find(".ssquiz_ok").click();
-			})
-			.first().focus();
-		}, 100);
-	}
+		}
 });
