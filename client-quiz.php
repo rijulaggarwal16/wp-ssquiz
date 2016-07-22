@@ -35,7 +35,7 @@ function ssquiz_start( $params ) {
 
 	// Paging Settings
 	$info->paging = 10;
-	$info->current_page = 1;
+	$info->current_page = 0;
 	$status->paging = $info->paging;
 	$info->params = $params;
 	
@@ -109,8 +109,13 @@ function ssquiz_start( $params ) {
 		$status->resuming = false;
 		$status->current_page = $info->current_page; 
 	} else{
-		$status->questions_counter = $quiz_history->question_offset;
-		$info->questions_counter = $quiz_history->question_offset;
+		if($quiz_history->question_offset <= 0){
+			$status->questions_counter = 0;
+			$info->questions_counter = 0;
+		}else{
+			$status->questions_counter = $quiz_history->question_offset;
+			$info->questions_counter = $quiz_history->question_offset;
+		}
 		$info->questions_right = $quiz_history->questions_right;
 		$info->current_page = $quiz_history->page_offset;
 		$info->page_answers = json_decode(base64_decode( $quiz_history->page_responses ));
@@ -119,7 +124,9 @@ function ssquiz_start( $params ) {
 		$status->resuming = true;
 		$status->current_page = $info->current_page;
 	}
+	$status->finished = false;
 	$status->exit = false;
+	$status->save_processed = false;
 			
 	// if logged in fill the input
 	if ( $info->name ) {
@@ -182,17 +189,24 @@ function self_ssquiz_get_backup(){
 
 add_action('wp_ajax_self_ssquiz_get_backup', 'self_ssquiz_get_backup');
 
-function ssquiz_response() {
+function self_ssquiz_save(){
 	$info = unserialize( gzuncompress( base64_decode( $_REQUEST['info'] )  ));
 	$status = json_decode( stripslashes( $_REQUEST['status'] ) );
 
+	self_helper_save($info, $status, true);
+	wp_die();
+}
+add_action('wp_ajax_self_ssquiz_save', 'self_ssquiz_save');
+
+function self_helper_save(&$info, &$status, $same_page){
 	// Store recent responses
 	$recent_answers = "";
 	if($status->answers != null && count($status->answers) > 0){
-		$i = ($info->current_page-2)*$info->paging;
+		$i = ($info->current_page-1)*$info->paging;
+		$i = $i<0?0:$i;
 		$answerIndex = 0;
 		$grouped_answers = array();
-		for ( ; $i < ($info->current_page-1)*$info->paging && $i < $info->total_questions; $i++ ) {
+		for ( ; $i < ($info->current_page)*$info->paging && $i < $info->total_questions; $i++ ) {
 			$question = $info->questions[$i];
 			$temp = array();
 			for ( $j = 0; $j < count( $question->answers ); $j++ ) {
@@ -204,24 +218,43 @@ function ssquiz_response() {
 		$recent_answers = base64_encode(json_encode($grouped_answers));
 	}
 
-	// Store All Responses
-	$response_store = "responses";
-	$store = array();
-	if(isset($_COOKIE[$response_store])){
-		$cookie = $_COOKIE[$response_store];
-		if(strlen($cookie) > 3000){
-			checkin_cookie($info,$cookie);
-			$_COOKIE[$response_store] = '';
-			$store = array();
-		}else
-			$store = unserialize(gzuncompress(base64_decode($cookie)));
-	}
+	if(false == $same_page){
+		// Store All Responses
+		// $response_store = "responses";
+		// $store = array();
+		// if(isset($_COOKIE[$response_store])){
+		// 	$cookie = $_COOKIE[$response_store];
+		// 	if(strlen($cookie) > 3000){
+		// 		checkin_responses($info,$cookie);
+		// 		$_COOKIE[$response_store] = '';
+		// 		$store = array();
+		// 	}else
+		// 		$store = unserialize(gzuncompress(base64_decode($cookie)));
+		// }
 
-	if(count($status->answers) > 0 && !$status->exit)
-		$store[] = $status->answers;
-	if(count($store) > 0){
-		setcookie($response_store,base64_encode(gzcompress(serialize($store))),2*DAYS_IN_SECONDS,COOKIEPATH,COOKIE_DOMAIN);
+		$store = array();
+		if(count($status->answers) > 0 && !$status->exit){
+			if(!$status->save_processed)
+				$store[] = $status->answers;
+			else {
+				$store[count($store) - 1] = $status->answers;
+			}
+			$status->save_processed = $same_page;		// Staying on the same page or moving to next 
+		}
+		if(count($store) > 0){
+			// setcookie($response_store,base64_encode(gzcompress(serialize($store))),2*DAYS_IN_SECONDS,COOKIEPATH,COOKIE_DOMAIN);
+			// save responses
+			checkin_responses($info, base64_encode(gzcompress(serialize($store))),$same_page);
+		}
 	}
+	// save current page (After saving all responses as it generates user_id,quiz_id mapping)
+	if(!empty($recent_answers))
+		checkin_current_responses($info, $recent_answers);
+}
+
+function ssquiz_response() {
+	$info = unserialize( gzuncompress( base64_decode( $_REQUEST['info'] )  ));
+	$status = json_decode( stripslashes( $_REQUEST['status'] ) );
 
 	// Restart?
 	if ( true == $status->restart )
@@ -250,9 +283,10 @@ function ssquiz_response() {
 		}
 		else if(! $info->all && $info->paging > 1){	// paging of questions
 			$status->results = '';
-			$i = ($info->current_page-2)*$info->paging;
+			$i = ($info->current_page-1)*$info->paging;
+			$i = $i < 0?0:$i;
 			$answerIndex = 0;
-			for ( ; $i < ($info->current_page-1)*$info->paging && $i < $info->total_questions; $i++ ) {
+			for ( ; $i < ($info->current_page)*$info->paging && $i < $info->total_questions; $i++ ) {
 				$question = $info->questions[$i];
 				$temp = array();
 				for ( $j = 0; $j < count( $question->answers ); $j++ ) {
@@ -283,6 +317,9 @@ function ssquiz_response() {
 		}
 		else if(! $info->all && $info->paging > 1){	// paging of questions
 			$index = 0;
+			if(!$status->resuming)
+				$info->current_page++;
+			$status->current_page = $info->current_page;
 			for($i = $info->questions_counter; $i < $info->current_page*$info->paging && $i < $info->total_questions; $i++){
 				if($info->page_answers == null || count($info->page_answers) <= 0)
 					$new_screen .= ssquiz_print_question( $info->questions[$i], $info, array() );
@@ -295,8 +332,6 @@ function ssquiz_response() {
 					$new_screen .= '<hr />';
 			}
 			$info->page_answers = array();
-			$info->current_page++;
-			$status->current_page = $info->current_page;
 		}
 		else { // print all questions at once
 			foreach ($info->questions as $question) {
@@ -308,14 +343,12 @@ function ssquiz_response() {
 			$new_screen .= '<script>jQuery.fn.run_all_at_once();</script>';
 		}
 		$status->questions_counter = $info->questions_counter;
+		self_helper_save($info, $status, false);
 		wp_die ( ssquiz_add_hidden( $new_screen, $status, $info ) );
 	}
 	// finished
 	else{
-		// save responses
-		checkin_cookie($info, base64_encode(gzcompress(serialize($store))));
-		// save current page (After saving all responses as it generates user_id,quiz_id mapping)
-		checkin_current_responses($info, $recent_answers);
+		self_helper_save($info, $status, false);
 		// Delete cookies
 		unset($_COOKIE[$response_store]);
 		setcookie($response_store,'',time() - (15*60),COOKIEPATH);
@@ -323,41 +356,42 @@ function ssquiz_response() {
 	}
 }
 
-add_action('wp_ajax_nopriv_ssquiz_response', 'ssquiz_response');
+// add_action('wp_ajax_nopriv_ssquiz_response', 'ssquiz_response');
 add_action('wp_ajax_ssquiz_response', 'ssquiz_response');
 
-function checkin_current_responses($info,$cookie_data){
+function checkin_current_responses($info,$response_data){
 	global $wpdb;
-	$data['page_responses'] = $cookie_data;
-	$where = array("user_id"=>$info->user->id,"quiz_id"=>$info->quiz->id);
-	$wpdb->update("{$wpdb->base_prefix}self_ssquiz_response_history",$data,$where,array("%s"),array('%d','%d'));
+	$sql = "INSERT INTO {$wpdb->base_prefix}self_ssquiz_response_history (question_offset,page_offset,user_id,quiz_id,page_responses) VALUES (%d,%d,%d,%d,%s) ON DUPLICATE KEY UPDATE page_responses = %s";
+	$sql = $wpdb->prepare($sql,($info->current_page-1)*$info->paging,$info->current_page,$info->user->id,$info->quiz->id,$response_data,$response_data);
+	$wpdb->query($sql);
 }
 
 /**
 * To store the responses in the database (Append)
 * @arg  cookie_data The zipped, base64 encoded and serialized cookie data to store
 **/
-function checkin_cookie($info,$cookie_data){
+function checkin_responses(&$info,$response_data,$reset_page){
 	global $wpdb;
-	if($cookie_data == null)
+	if($response_data == null)
 		return;
-	$response_history = $wpdb->get_var("SELECT response_meta FROM {$wpdb->base_prefix}self_ssquiz_response_history WHERE user_id={$info->user->id} && quiz_id={$info->quiz->id};");
+	$response_history = $wpdb->get_row("SELECT * FROM {$wpdb->base_prefix}self_ssquiz_response_history WHERE user_id={$info->user->id} && quiz_id={$info->quiz->id};");
 	$data = array();
-	$data['question_offset'] = ($info->current_page-2)*$info->paging;
-	$data['page_offset'] = $info->current_page-1;
+	$data['result_backup'] = $response_history->result_backup;
+	if(true == $reset_page) 
+		$data['page_responses'] = $response_history->page_responses;
+	else
+		$data['page_responses'] = '';
+	$data['question_offset'] = ($info->current_page-1)*$info->paging;
+	$data['page_offset'] = $info->current_page;
 	$data['questions_right'] = $info->questions_right;
-	if($response_history == NULL || $response_history === false){
-		$data['response_meta'] = $cookie_data;
-		$data['user_id'] = $info->user->id;
-		$data['quiz_id'] = $info->quiz->id;
-		$wpdb->insert("{$wpdb->base_prefix}self_ssquiz_response_history",$data,array('%d','%d','%d','%s','%d','%d'));
-	} else{
-		$array1 = unserialize(gzuncompress(base64_decode($response_history)));
-		$array2 = unserialize(gzuncompress(base64_decode($cookie_data)));
-		$data['response_meta'] = base64_encode(gzcompress(serialize(array_merge($array1,$array2))));
-		$where = array("user_id"=>$info->user->id,"quiz_id"=>$info->quiz->id);
-		$wpdb->update("{$wpdb->base_prefix}self_ssquiz_response_history",$data,$where,array("%d","%d","%d","%s"),array('%d','%d'));
-	}
+	if($response_history != NULL && !empty($response_history->response_meta))
+		$array1 = unserialize(gzuncompress(base64_decode($response_history->response_meta)));
+	$array2 = unserialize(gzuncompress(base64_decode($response_data)));
+	$final_data = empty($array1)?$array2:array_merge($array1,$array2);
+	$data['response_meta'] = base64_encode(gzcompress(serialize($final_data)));
+	$data['user_id'] = $info->user->id;
+	$data['quiz_id'] = $info->quiz->id;
+	$wpdb->replace("{$wpdb->base_prefix}self_ssquiz_response_history",$data,array('%s','%s','%d','%d','%d','%s','%d','%d'));
 }
 
 function ssquiz_check_answers( $number, &$info, &$answers ) {

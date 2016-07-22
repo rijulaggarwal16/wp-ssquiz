@@ -339,6 +339,27 @@ jQuery(document).ready(function( $ ) {
 	if ( $.browser.mozilla ) { // hack for firefox
 		$('html, body').css('overflow-y', 'visible');
 	}
+
+	var saveInterval = setInterval(save_progress, 60*1000);
+
+	function save_progress(){
+		getAnswers();
+		var main = $('.ssquiz');
+		var status = $.parseJSON(main.find(".ssquiz_hidden_status").html());
+		var info = main.find(".ssquiz_hidden_info").html();
+
+		status.answers = answers;
+
+		var statusCopy = JSON.parse(JSON.stringify(status));
+		delete statusCopy.results;
+		$.post(ssquiz.ajaxurl, {
+				action: "self_ssquiz_save",
+				info: info,
+				status: JSON.stringify(statusCopy)
+		}, function (results) {
+		});
+		answers = [];
+	}
 	
 	$(document).delegate(".ssquiz_ok, .ssquiz_exit", "click", function () {
 		getAnswers();
@@ -366,9 +387,9 @@ jQuery(document).ready(function( $ ) {
 		if ( status.just_started )
 			temp = start_quiz( main, status );
 		else {
-			if (status.results != null && status.results !='0' && !status.resuming)
-				ssquiz_backup[status.current_page-2] = status.results;
-			else if(status.results != null && status.results !='0')
+			// if (status.results != null && status.results !='0' && !status.resuming)
+			// 	ssquiz_backup[status.current_page-1] = status.results;
+			if(status.results != null && status.results !='0')
 				status.resuming = false;
 			delete status.results;
 			temp2 = check_answers( main, status );
@@ -390,18 +411,12 @@ jQuery(document).ready(function( $ ) {
 				main.find(".ssquiz_body").html(results);
 				// finished
 				if ( true == status.finished ) {
+					clearInterval(saveInterval);
 					main.find(".ssquiz_ok, .ssquiz_exit").remove();
 					$('<div class="ssquiz_history"></div>').insertBefore(main.find(".history_list"));
 					var status1 = $.parseJSON($(".ssquiz_hidden_status").html());
 					if (status1.results != null && status1.results !='0' && !status.exit) //!
-						ssquiz_backup[status1.current_page-1] = status1.results;
-
-					// store ssquiz_backup for recording results for each question
-					$.post(ssquiz.ajaxurl, {
-						action: "self_ssquiz_store_backup",
-						info: info,
-						backup: JSON.stringify(ssquiz_backup)
-					});
+						ssquiz_backup[status1.current_page] = status1.results;
 				}
 				// about to finish
 				if (status.total_questions <= status.questions_counter + status.paging) {
@@ -417,9 +432,18 @@ jQuery(document).ready(function( $ ) {
 						main.find(".ssquiz_ok").html(ssquiz.next);
 					}
 				}
+				// store ssquiz_backup for recording results for each question
+				var status2 = $.parseJSON(main.find(".ssquiz_hidden_status").html());
+				if ( !status.just_started && false == status.finished )
+					if (status2.results != null && status2.results !='0' && !status.resuming)
+						ssquiz_backup[status2.current_page-1] = status2.results;
+				$.post(ssquiz.ajaxurl, {
+					action: "self_ssquiz_store_backup",
+					info: info,
+					backup: JSON.stringify(ssquiz_backup)
+				});
 				main.find(".ssquiz_body").fadeIn(100, function(){ button.removeAttr("disabled"); });
 			});
-
 		});
 		main.find(".ssquiz_body").html("<div class='ssquiz_loading'><img src='"+ssquiz.assets+"loader.gif'/></div>");
 		return false;
@@ -554,14 +578,14 @@ jQuery(document).ready(function( $ ) {
 	}
 	
 	function getAnswers(){
-			$(".ssquiz_answer").each(function (i) {
-				answers[i] = new Object();
-				if( $(this).attr('type') == 'text' )
-					answers[i].answer = $(this).val();
-				else {
-					answers[i].answer = $(this).next().html();
-					answers[i].correct = $(this).is(':checked');
-				}
-			});
-		}
+		$(".ssquiz_answer").each(function (i) {
+			answers[i] = new Object();
+			if( $(this).attr('type') == 'text' )
+				answers[i].answer = $(this).val();
+			else {
+				answers[i].answer = $(this).next().html();
+				answers[i].correct = $(this).is(':checked');
+			}
+		});
+	}
 });
