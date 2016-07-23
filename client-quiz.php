@@ -84,15 +84,6 @@ function ssquiz_start( $params ) {
 	$info->user->name = $current_user->display_name;
 	$info->user->role = array_shift($current_user->roles);
 
-	// Did current user tried this quiz
-	if( $info->one_chance ) {
-		$attempts = $wpdb->get_var( "
-			SELECT count(*) FROM {$wpdb->base_prefix}ssquiz_history WHERE user_id = {$info->user->id} AND quiz_id = {$info->quiz->id}
-		");
-		if( $attempts > 0 )
-			return ssquiz_return_quiz_body( '<h2>'.__('You already took this quiz', 'ssquiz').'</h2>' );
-	}
-
 	$start_screen = $settings->start_template;
 	ssquiz_tag_replace($start_screen, $info, 'start');
 
@@ -108,7 +99,18 @@ function ssquiz_start( $params ) {
 		$status->just_started = true;
 		$status->resuming = false;
 		$status->current_page = $info->current_page; 
-	} else{
+	} elseif($info->one_chance && $quiz_history->question_offset >= $info->total_questions){
+		$status->questions_counter = $info->total_questions;
+		$info->questions_counter = $info->total_questions;
+		$info->questions_right = $quiz_history->questions_right;
+		$info->current_page = $quiz_history->page_offset-1;
+		$info->just_started = false;
+		$status->just_started = false;
+		$status->current_page = $info->current_page;
+		return ssquiz_return_quiz_body( '<h2>'. $info->quiz->name .'</h2>', ssquiz_finish( $quiz_history->finish_screen, $status, $info ), '<script>document.getElementsByClassName("history_list")[0].insertAdjacentHTML("beforebegin",\'<div class="ssquiz_history"></div>\');</script>' );
+	} elseif($quiz_history->question_offset >= $info->total_questions){
+		$wpdb->delete($wpdb->base_prefix.'self_ssquiz_response_history',array('user_id'=>$info->user->id,'quiz_id'=>$info->quiz->id),array('%d','%d'));
+	}else{
 		if($quiz_history->question_offset <= 0){
 			$status->questions_counter = 0;
 			$info->questions_counter = 0;
@@ -220,18 +222,6 @@ function self_helper_save(&$info, &$status, $same_page){
 
 	if(false == $same_page){
 		// Store All Responses
-		// $response_store = "responses";
-		// $store = array();
-		// if(isset($_COOKIE[$response_store])){
-		// 	$cookie = $_COOKIE[$response_store];
-		// 	if(strlen($cookie) > 3000){
-		// 		checkin_responses($info,$cookie);
-		// 		$_COOKIE[$response_store] = '';
-		// 		$store = array();
-		// 	}else
-		// 		$store = unserialize(gzuncompress(base64_decode($cookie)));
-		// }
-
 		$store = array();
 		if(count($status->answers) > 0 && !$status->exit){
 			if(!$status->save_processed)
@@ -242,7 +232,6 @@ function self_helper_save(&$info, &$status, $same_page){
 			$status->save_processed = $same_page;		// Staying on the same page or moving to next 
 		}
 		if(count($store) > 0){
-			// setcookie($response_store,base64_encode(gzcompress(serialize($store))),2*DAYS_IN_SECONDS,COOKIEPATH,COOKIE_DOMAIN);
 			// save responses
 			checkin_responses($info, base64_encode(gzcompress(serialize($store))),$same_page);
 		}
@@ -348,15 +337,15 @@ function ssquiz_response() {
 	}
 	// finished
 	else{
+		if(!$status->exit)
+			$info->current_page++;
 		self_helper_save($info, $status, false);
-		// Delete cookies
-		unset($_COOKIE[$response_store]);
-		setcookie($response_store,'',time() - (15*60),COOKIEPATH);
+		global $wpdb;
+		$wpdb->update($wpdb->base_prefix.'self_ssquiz_response_history',array('finish_screen'=>$new_screen),array('user_id'=>$info->user->id,'quiz_id',$info->quiz->id),array('%s'),array('%d','%d'));
 		wp_die( ssquiz_finish( $new_screen, $status, $info ) );
 	}
 }
 
-// add_action('wp_ajax_nopriv_ssquiz_response', 'ssquiz_response');
 add_action('wp_ajax_ssquiz_response', 'ssquiz_response');
 
 function checkin_current_responses($info,$response_data){

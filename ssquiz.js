@@ -361,13 +361,11 @@ jQuery(document).ready(function( $ ) {
 		answers = [];
 	}
 	
-	$(document).delegate(".ssquiz_ok, .ssquiz_exit", "click", function () {
-		getAnswers();
-		var main = $(this).parents(".ssquiz");
-		var status = $.parseJSON(main.find(".ssquiz_hidden_status").html());
-		var info = main.find(".ssquiz_hidden_info").html();
-
+	function retrieveBackup(){
 		// retrieve backup
+		var main = $('.ssquiz');
+		var info = main.find(".ssquiz_hidden_info").html();
+		
 		if(ssquiz_backup.length === 0){
 			$.post(ssquiz.ajaxurl, {
 				action: "self_ssquiz_get_backup",
@@ -377,6 +375,17 @@ jQuery(document).ready(function( $ ) {
 					ssquiz_backup = $.parseJSON(backup);
 			});
 		}
+	}
+
+	retrieveBackup();
+	
+	$(document).delegate(".ssquiz_ok, .ssquiz_exit", "click", function () {
+		getAnswers();
+		var main = $(this).parents(".ssquiz");
+		var status = $.parseJSON(main.find(".ssquiz_hidden_status").html());
+		var info = main.find(".ssquiz_hidden_info").html();
+
+		retrieveBackup();
 
 		var button = $(this);
 		var temp = true;

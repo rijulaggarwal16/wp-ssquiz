@@ -39,6 +39,19 @@ function ssquiz_install () {
 		*/
 		
 		$sql = "
+		CREATE TABLE {$wpdb->base_prefix}self_ssquiz_response_history (
+  			user_id int(11) NOT NULL,
+  			quiz_id int(11) NOT NULL,
+  			question_offset int(11) NOT NULL,
+  			response_meta longtext,
+  			questions_right int(11) NOT NULL DEFAULT '0',
+  			result_backup longtext,
+  			page_offset int(11) NOT NULL,
+  			page_responses longtext,
+			finish_screen longtext,
+  			PRIMARY KEY (`user_id`,`quiz_id`))
+  		DEFAULT CHARACTER SET utf8 COLLATE utf8_general_ci;
+
 		CREATE TABLE {$wpdb->base_prefix}ssquiz_quizzes (
 			id mediumint(9) UNSIGNED NOT NULL AUTO_INCREMENT,
 			name VARCHAR(100) NOT NULL,
@@ -352,6 +365,10 @@ function ssquiz_uninstall(){
 	//	DROP TABLE {$wpdb->base_prefix}ssquiz_questions;
 	//	DROP TABLE {$wpdb->base_prefix}ssquiz_history;
 	//");
+
+	$wpdb->query("
+		DROP TABLE IF EXISTS {$wpdb->base_prefix}self_ssquiz_response_history;
+	");
 }
 
 register_activation_hook( __FILE__, 'ssquiz_install' );
