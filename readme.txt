@@ -1,3 +1,11 @@
+=== Modifications ===
+Pagination added => 10 questions per page
+save/resume added for each page
+On resuming, pre-fills the questions on that page with the saved answers
+Auto-saves responses after 1 minute intervals
+Single try judging criteria modified to fit save/resume feature
+Shows finished screen on accessing the quiz after finishing it once, if single try only is enabled
+
 === SS Quiz ===
 Contributors: ssvadim
 Donate link: http://100vadim.com/ssquiz/
