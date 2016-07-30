@@ -215,7 +215,7 @@ function ssquiz_print_questions( $offset, $quiz_id ) {
 		//print question 
 		if ( ! isset($question->id ) )
 			continue;
-		$temp = esc_html( $question->question );
+		$temp = strip_tags( $question->question );
 		if (strlen($temp) > 100)
 			$temp = substr($temp, 0, 97) . '...';
 			
