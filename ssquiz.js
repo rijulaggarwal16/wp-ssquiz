@@ -40,7 +40,7 @@ jQuery(document).ready(function( $ ) {
 				$("#quiz_name").val('');
 				$("#quiz_type").val(null);
 				$("#tag_free").val(null);
-				$("#prerequisites").val([]);
+				$("#prerequisites").val(0);
 				$("#next_link").val('');
 				$("#upload_questions").val('');
 				$("#description_ifr").contents().find("body").html('');
@@ -340,7 +340,9 @@ jQuery(document).ready(function( $ ) {
 		$('html, body').css('overflow-y', 'visible');
 	}
 
-	var saveInterval = setInterval(save_progress, 60*1000);
+	var saveInterval;
+	if(($(".ssquiz_ok").length && $(".ssquiz_exit").length))
+		saveInterval = setInterval(save_progress, 60*1000);
 
 	function save_progress(){
 		getAnswers();

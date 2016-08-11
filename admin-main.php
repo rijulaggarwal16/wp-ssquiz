@@ -341,6 +341,12 @@ function ssquiz_quiz_template() {
 			<input type="text" class="span3" id="quiz_name" style="width: 270px;">
 			<label>Description</label>
 			<?php wp_editor('', 'description'); ?>
+			<br/>
+			<label>Pre-requisite</label>
+			<select id="prerequisites">
+				<option value='0' selected>--</option>
+				<?php ssquiz_list_quizzes(false); ?>
+			</select>
 		</form>
 	</div>
 	<?php

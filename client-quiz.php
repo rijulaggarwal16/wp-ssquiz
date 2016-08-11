@@ -107,7 +107,7 @@ function ssquiz_start( $params ) {
 		$info->just_started = false;
 		$status->just_started = false;
 		$status->current_page = $info->current_page;
-		return ssquiz_return_quiz_body( '<h2>'. $info->quiz->name .'</h2>', ssquiz_finish( $quiz_history->finish_screen, $status, $info ), '<script>document.getElementsByClassName("history_list")[0].insertAdjacentHTML("beforebegin",\'<div class="ssquiz_history"></div>\');</script>' );
+		return ssquiz_return_quiz_body( '<h2>'. $info->quiz->name .'</h2>', unserialize( gzuncompress( base64_decode($quiz_history->finish_screen))), '<script>document.getElementsByClassName("history_list")[0].insertAdjacentHTML("beforebegin",\'<div class="ssquiz_history"></div>\');</script>' );
 	} elseif($quiz_history->question_offset >= $info->total_questions){
 		$wpdb->delete($wpdb->base_prefix.'self_ssquiz_response_history',array('user_id'=>$info->user->id,'quiz_id'=>$info->quiz->id),array('%d','%d'));
 	}else{
@@ -340,8 +340,6 @@ function ssquiz_response() {
 		if(!$status->exit)
 			$info->current_page++;
 		self_helper_save($info, $status, false);
-		global $wpdb;
-		$wpdb->update($wpdb->base_prefix.'self_ssquiz_response_history',array('finish_screen'=>$new_screen),array('user_id'=>$info->user->id,'quiz_id',$info->quiz->id),array('%s'),array('%d','%d'));
 		wp_die( ssquiz_finish( $new_screen, $status, $info ) );
 	}
 }
@@ -522,7 +520,7 @@ function ssquiz_finish( &$finish_screen, &$status, &$info ) {
 	}
 	$output = ob_get_contents();
 	ob_end_clean();
-	$finish_screen .= $output;
+	$finish_screen .= $output;	
 
 	$temp = new stdClass();
 	$temp->user_name = $info->user->name;
@@ -562,7 +560,9 @@ function ssquiz_finish( &$finish_screen, &$status, &$info ) {
 			remove_filter( 'wp_mail_content_type', 'ono_set_html_content_type' );
 		}
 	}
-	return ssquiz_add_hidden($finish_screen, $status, $info );
+	$temp_screen = ssquiz_add_hidden($finish_screen, $status, $info );
+	$wpdb->update($wpdb->base_prefix.'self_ssquiz_response_history',array('finish_screen'=>base64_encode(gzcompress(serialize($temp_screen)))),array('user_id'=>$info->user->id,'quiz_id'=>$info->quiz->id),array('%s'),array('%d','%d'));
+	return $temp_screen;
 }
 
 function ssquiz_tag_replace( &$screen, &$info, $state ) {
