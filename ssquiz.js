@@ -367,7 +367,8 @@ jQuery(document).ready(function( $ ) {
 		// retrieve backup
 		var main = $('.ssquiz');
 		var info = main.find(".ssquiz_hidden_info").html();
-		
+		if(!info)
+			return;
 		if(ssquiz_backup.length === 0){
 			$.post(ssquiz.ajaxurl, {
 				action: "self_ssquiz_get_backup",
