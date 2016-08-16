@@ -341,8 +341,12 @@ jQuery(document).ready(function( $ ) {
 	}
 
 	var saveInterval;
-	if(($(".ssquiz_ok").length && $(".ssquiz_exit").length))
+	if(($(".ssquiz_ok").length && $(".ssquiz_exit").length)){
 		saveInterval = setInterval(save_progress, 60*1000);
+		window.onbeforeunload = function(event){
+			event.returnValue = "Please use the exam controls to save and exit the exam safely."; 
+		};
+	}
 
 	function save_progress(){
 		getAnswers();

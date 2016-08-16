@@ -26,9 +26,26 @@ function ssquiz_add_hidden(&$new_screen, &$status, &$info ) {
 	return $new_screen;
 }
 
+function checkPrereq($quiz_id){
+	global $wpdb;
+    $user_id = get_current_user_id();
+	$quiz_meta = $wpdb->get_var("SELECT meta FROM {$wpdb->base_prefix}ssquiz_quizzes WHERE id=".$quiz_id);
+    $quiz_meta = unserialize($quiz_meta);
+    if($quiz_meta->prerequisites > 0){
+       $prereq_status = $wpdb->get_row("SELECT questions_right,total,question_offset FROM {$wpdb->base_prefix}self_ssquiz_response_history AS s JOIN {$wpdb->base_prefix}ssquiz_history AS h ON s.quiz_id=h.quiz_id WHERE s.user_id=".$user_id." AND s.quiz_id=".$quiz_meta->prerequisites." order by timestamp desc limit 1");
+    }
+	$pass_percent = 85;
+	if((null != $quiz_status && $quiz_status->question_offset < $quiz_status->total) || (null == $quiz_status && null != $prereq_status && $prereq_status->question_offset >= $prereq_status->total && ($prereq_status->questions_right/$prereq_status->total)*100 >= $pass_percent) || (null == $quiz_status && $quiz_meta->prerequisites <= 0)){
+		return true;
+	}
+	return false;
+}
+
 // Called by 'ssquiz' shortcode
 function ssquiz_start( $params ) {
 	global $wpdb;
+	if(false === checkPrereq($params["id"]))
+		return ssquiz_return_quiz_body("<h2>You must successfully complete the Prerequisite for this course first.</h2>","","");
 	$settings = get_option( 'ssquiz_settings' );
 	$info = new stdClass();
 	$status = new stdClass();
