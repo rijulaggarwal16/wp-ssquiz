@@ -116,27 +116,27 @@ function ssquiz_start( $params ) {
 		$status->just_started = true;
 		$status->resuming = false;
 		$status->current_page = $info->current_page; 
-	} elseif($info->one_chance && $quiz_history->question_offset >= $info->total_questions){
+	} elseif($info->one_chance && intval($quiz_history->question_offset) >= $info->total_questions){
 		$status->questions_counter = $info->total_questions;
 		$info->questions_counter = $info->total_questions;
-		$info->questions_right = $quiz_history->questions_right;
-		$info->current_page = $quiz_history->page_offset-1;
+		$info->questions_right = intval($quiz_history->questions_right);
+		$info->current_page = intval($quiz_history->page_offset-1);
 		$info->just_started = false;
 		$status->just_started = false;
 		$status->current_page = $info->current_page;
 		return ssquiz_return_quiz_body( '<h2>'. $info->quiz->name .'</h2>', unserialize( gzuncompress( base64_decode($quiz_history->finish_screen))), '<script>document.getElementsByClassName("history_list")[0].insertAdjacentHTML("beforebegin",\'<div class="ssquiz_history"></div>\');</script>' );
-	} elseif($quiz_history->question_offset >= $info->total_questions){
+	} elseif(intval($quiz_history->question_offset) >= $info->total_questions){
 		$wpdb->delete($wpdb->base_prefix.'self_ssquiz_response_history',array('user_id'=>$info->user->id,'quiz_id'=>$info->quiz->id),array('%d','%d'));
 	}else{
-		if($quiz_history->question_offset <= 0){
+		if(intval($quiz_history->question_offset) <= 0){
 			$status->questions_counter = 0;
 			$info->questions_counter = 0;
 		}else{
-			$status->questions_counter = $quiz_history->question_offset;
-			$info->questions_counter = $quiz_history->question_offset;
+			$status->questions_counter = intval($quiz_history->question_offset);
+			$info->questions_counter = intval($quiz_history->question_offset);
 		}
-		$info->questions_right = $quiz_history->questions_right;
-		$info->current_page = $quiz_history->page_offset;
+		$info->questions_right = intval($quiz_history->questions_right);
+		$info->current_page = intval($quiz_history->page_offset);
 		$info->page_answers = json_decode(base64_decode( $quiz_history->page_responses ));
 		$info->just_started = false;
 		$status->just_started = false;
@@ -522,12 +522,8 @@ function ssquiz_finish( &$finish_screen, &$status, &$info ) {
 		} 
 		else {
 			echo '<h4 style="margin: 7px;">' . __("Answered questions") . '</h4>';
-			$tempPageNum = 1;
-			$max_count_limit = $status->exit?$info->questions_counter-1:$info->questions_counter;
-			for ( $i = 0; $i < $max_count_limit; $i++ ) {
-				$temp = ( true == $info->questions[$i]->correct ) ? 'alert-success' : 'alert-error';
-				if($i >= $info->total_questions - (($info->total_questions-1)/$info->paging)-1)
-					echo "<a href='#' id='ssquiz_$tempPageNum' class='ssquiz_btn $temp' onclick='jQuery.fn.history_walk($tempPageNum);return false;'>". ( $tempPageNum++ ) ."</a>";
+			for ( $i = 1; $i < $info->current_page; $i++ ) {
+				echo "<a href='#' id='ssquiz_$i' class='ssquiz_btn' onclick='jQuery.fn.history_walk($i);return false;'>". ( $i ) ."</a>";
 			}
 		}
 		echo "<div>
