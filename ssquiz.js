@@ -584,13 +584,6 @@ jQuery(document).ready(function( $ ) {
 			getAnswers();
 		})
 
-		setTimeout(function () {
-			$('.ssquiz_answer[type="text"]').on("keydown", function(event){
-				if (event.keyCode == 13)
-					$(this).parents(".ssquiz").find(".ssquiz_ok").click();
-			})
-			.first().focus();
-		}, 100);
 	}
 	
 	function getAnswers(){
