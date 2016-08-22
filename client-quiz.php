@@ -35,7 +35,7 @@ function checkPrereq($quiz_id){
        $prereq_status = $wpdb->get_row("SELECT questions_right,total,question_offset FROM {$wpdb->base_prefix}self_ssquiz_response_history AS s JOIN {$wpdb->base_prefix}ssquiz_history AS h ON s.quiz_id=h.quiz_id WHERE s.user_id=".$user_id." AND s.quiz_id=".$quiz_meta->prerequisites." order by timestamp desc limit 1");
     }
 	$pass_percent = 85;
-	if((null != $quiz_status && $quiz_status->question_offset < $quiz_status->total) || (null == $quiz_status && null != $prereq_status && $prereq_status->question_offset >= $prereq_status->total && ($prereq_status->questions_right/$prereq_status->total)*100 >= $pass_percent) || (null == $quiz_status && $quiz_meta->prerequisites <= 0)){
+	if(is_super_admin() || (null != $quiz_status && $quiz_status->question_offset < $quiz_status->total) || (null == $quiz_status && null != $prereq_status && $prereq_status->question_offset >= $prereq_status->total && ($prereq_status->questions_right/$prereq_status->total)*100 >= $pass_percent) || (null == $quiz_status && $quiz_meta->prerequisites <= 0)){
 		return true;
 	}
 	return false;
@@ -116,7 +116,7 @@ function ssquiz_start( $params ) {
 		$status->just_started = true;
 		$status->resuming = false;
 		$status->current_page = $info->current_page; 
-	} elseif($info->one_chance && intval($quiz_history->question_offset) >= $info->total_questions){
+	} elseif((!is_super_admin()) && (($info->two_chance && intval($quiz_history->question_offset) >= $info->total_questions && intval($quiz_history->attempts) >= 2) || ($info->one_chance && intval($quiz_history->question_offset) >= $info->total_questions && intval($quiz_history->attempts) >= 1) || (has_passed($info->user->id, $info->quiz->id)))){
 		$status->questions_counter = $info->total_questions;
 		$info->questions_counter = $info->total_questions;
 		$info->questions_right = intval($quiz_history->questions_right);
@@ -126,7 +126,10 @@ function ssquiz_start( $params ) {
 		$status->current_page = $info->current_page;
 		return ssquiz_return_quiz_body( '<h2>'. $info->quiz->name .'</h2>', unserialize( gzuncompress( base64_decode($quiz_history->finish_screen))), '<script>document.getElementsByClassName("history_list")[0].insertAdjacentHTML("beforebegin",\'<div class="ssquiz_history"></div>\');</script>' );
 	} elseif(intval($quiz_history->question_offset) >= $info->total_questions){
-		$wpdb->delete($wpdb->base_prefix.'self_ssquiz_response_history',array('user_id'=>$info->user->id,'quiz_id'=>$info->quiz->id),array('%d','%d'));
+		if(is_super_admin() || !($info->two_chance || $info->one_chance))
+			$wpdb->delete($wpdb->base_prefix.'self_ssquiz_response_history',array('user_id'=>$info->user->id,'quiz_id'=>$info->quiz->id),array('%d','%d'));
+		else
+			$wpdb->update($wpdb->base_prefix.'self_ssquiz_response_history',array('attempts' => intval($quiz_history->attempts) + 1), array('user_id'=>$info->user->id,'quiz_id'=>$info->quiz->id), array('%d'), array('%d','%d'));
 	}else{
 		if(intval($quiz_history->question_offset) <= 0){
 			$status->questions_counter = 0;
@@ -181,6 +184,16 @@ function ssquiz_start( $params ) {
 	}
 
 	return ssquiz_return_quiz_body( $header, ssquiz_add_hidden($start_screen, $status, $info ), $footer );
+}
+
+function has_passed($user_id, $quiz_id){
+	global $wpdb;
+	$quiz_status = $wpdb->get_row("SELECT questions_right,total,question_offset FROM {$wpdb->base_prefix}self_ssquiz_response_history AS s JOIN {$wpdb->base_prefix}ssquiz_history AS h ON s.quiz_id=h.quiz_id WHERE s.user_id=".$user_id." AND s.quiz_id=".$quiz_id." order by timestamp desc limit 1");
+	$pass_percent = 85;
+	if (null != $quiz_status && $quiz_status->question_offset >= $quiz_status->total && ($quiz_status->questions_right/$quiz_status->total)*100 >= $pass_percent) {
+		return true;
+	}
+	return false;
 }
 
 // Will be executed after cookie data is successfully stored in DB

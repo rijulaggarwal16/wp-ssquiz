@@ -49,6 +49,7 @@ function ssquiz_install () {
   			page_offset int(11) NOT NULL,
   			page_responses longtext,
 			finish_screen longtext,
+			attempts int(11) NOT NULL DEFAULT '1',
   			PRIMARY KEY (`user_id`,`quiz_id`))
   		DEFAULT CHARACTER SET utf8 COLLATE utf8_general_ci;
 
