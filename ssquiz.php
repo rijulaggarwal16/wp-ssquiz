@@ -367,9 +367,9 @@ function ssquiz_uninstall(){
 	//	DROP TABLE {$wpdb->base_prefix}ssquiz_history;
 	//");
 
-	$wpdb->query("
-		DROP TABLE IF EXISTS {$wpdb->base_prefix}self_ssquiz_response_history;
-	");
+	// $wpdb->query("
+	// 	DROP TABLE IF EXISTS {$wpdb->base_prefix}self_ssquiz_response_history;
+	// ");
 }
 
 register_activation_hook( __FILE__, 'ssquiz_install' );
