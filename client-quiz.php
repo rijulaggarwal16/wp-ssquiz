@@ -308,9 +308,14 @@ function ssquiz_response() {
 			for ( ; $i < ($info->current_page)*$info->paging && $i < $info->total_questions; $i++ ) {
 				$question = $info->questions[$i];
 				$temp = array();
-				for ( $j = 0; $j < count( $question->answers ); $j++ ) {
+				if($question->type == 'fill'){
 					$temp[] = $status->answers[$answerIndex];
 					$answerIndex++;
+				}else{
+					for ( $j = 0; $j < count( $question->answers ); $j++ ) {
+						$temp[] = $status->answers[$answerIndex];
+						$answerIndex++;
+					}
 				}
 				ssquiz_check_answers( $i+1, $info, $temp );
 				$status->results .= $info->results;
