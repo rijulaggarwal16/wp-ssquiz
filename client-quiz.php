@@ -109,13 +109,7 @@ function ssquiz_start( $params ) {
 	// Resuming quiz
 	$quiz_history = $wpdb->get_row("SELECT * FROM {$wpdb->base_prefix}self_ssquiz_response_history WHERE user_id={$info->user->id} && quiz_id={$info->quiz->id};");
 	if(null == $quiz_history){
-		$status->questions_counter = 0;
-		$info->questions_counter = 0;
-		$info->questions_right = 0;
-		$info->just_started = true;
-		$status->just_started = true;
-		$status->resuming = false;
-		$status->current_page = $info->current_page; 
+		 basicStartInitialize($info, $status);
 	} elseif((!is_super_admin()) && (($info->two_chance && intval($quiz_history->question_offset) >= $info->total_questions && intval($quiz_history->attempts) >= 2) || ($info->one_chance && intval($quiz_history->question_offset) >= $info->total_questions && intval($quiz_history->attempts) >= 1) || (has_passed($info->user->id, $info->quiz->id)))){
 		$status->questions_counter = $info->total_questions;
 		$info->questions_counter = $info->total_questions;
@@ -126,8 +120,10 @@ function ssquiz_start( $params ) {
 		$status->current_page = $info->current_page;
 		return ssquiz_return_quiz_body( '<h2>'. $info->quiz->name .'</h2>', unserialize( gzuncompress( base64_decode($quiz_history->finish_screen))), '<script>document.getElementsByClassName("history_list")[0].insertAdjacentHTML("beforebegin",\'<div class="ssquiz_history"></div>\');</script>' );
 	} elseif(intval($quiz_history->question_offset) >= $info->total_questions){
-		if(is_super_admin() || !($info->two_chance || $info->one_chance))
+		if(is_super_admin() || !($info->two_chance || $info->one_chance)){
 			$wpdb->delete($wpdb->base_prefix.'self_ssquiz_response_history',array('user_id'=>$info->user->id,'quiz_id'=>$info->quiz->id),array('%d','%d'));
+			basicStartInitialize($info, $status);
+		}
 		else
 			$wpdb->update($wpdb->base_prefix.'self_ssquiz_response_history',array('attempts' => intval($quiz_history->attempts) + 1), array('user_id'=>$info->user->id,'quiz_id'=>$info->quiz->id), array('%d'), array('%d','%d'));
 	}else{
@@ -184,6 +180,16 @@ function ssquiz_start( $params ) {
 	}
 
 	return ssquiz_return_quiz_body( $header, ssquiz_add_hidden($start_screen, $status, $info ), $footer );
+}
+
+function basicStartInitialize(&$info, &$status){
+	$status->questions_counter = 0;
+	$info->questions_counter = 0;
+	$info->questions_right = 0;
+	$info->just_started = true;
+	$status->just_started = true;
+	$status->resuming = false;
+	$status->current_page = $info->current_page;
 }
 
 function has_passed($user_id, $quiz_id){
