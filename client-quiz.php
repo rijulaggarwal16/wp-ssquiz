@@ -586,6 +586,7 @@ function ssquiz_finish( &$finish_screen, &$status, &$info ) {
 		if( $settings->teacher_will_receive && $settings->teacher_email_address > '' ) {
 			ssquiz_tag_replace($settings->teacher_email_subject, $info, 'email_subject');
 			ssquiz_tag_replace($settings->teacher_email_address, $info, 'teacher_email');
+			ssquiz_tag_replace($settings->teacher_email_template, $info, 'teacher_email');
 			add_filter( 'wp_mail_content_type', 'ono_set_html_content_type' );
 			wp_mail( $settings->teacher_email_address, $settings->teacher_email_subject, $settings->teacher_email_template );
 			remove_filter( 'wp_mail_content_type', 'ono_set_html_content_type' );
@@ -604,7 +605,7 @@ function ssquiz_tag_replace( &$screen, &$info, $state ) {
 	
 	switch ( $state ) {
 		case 'teacher_email':
-			array_push($search, '%%EMAIL%' );
+			array_push($search, '%%EMAIL%%' );
 			array_push($replace, $info->user->email );
 		case 'user_email':
 		case 'finish':
