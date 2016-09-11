@@ -41,6 +41,7 @@ jQuery(document).ready(function( $ ) {
 				$("#quiz_type").val(null);
 				$("#tag_free").val(null);
 				$("#prerequisites").val(0);
+				$('#quiz_credits').val(0);
 				$("#next_link").val('');
 				$("#upload_questions").val('');
 				$("#description_ifr").contents().find("body").html('');
@@ -58,6 +59,7 @@ jQuery(document).ready(function( $ ) {
 				temp.tag_free = $("#tag_free").val();
 				temp.meta = new Object();
 				temp.meta.prerequisites = $("#prerequisites").val();
+				temp.meta.quiz_credits = $("#quiz_credits").val();
 				if ( $("#next_link").val() > '' ) {
 					temp.meta.next_link = $("#next_link").val();
 				}
@@ -69,6 +71,7 @@ jQuery(document).ready(function( $ ) {
 				$("#quiz_type").val(object.type);
 				$("#tag_free").val(object.tag_free);
 				$("#prerequisites").val(object.meta.prerequisites);
+				$("#quiz_credits").val(object.meta.quiz_credits);
 				$("#next_link").val(object.meta.next_link);
 				$("#upload_questions").val('');
 				$("#description_ifr").contents().find("body").html(object.meta.description);

@@ -347,6 +347,9 @@ function ssquiz_quiz_template() {
 				<option value='0' selected>--</option>
 				<?php ssquiz_list_quizzes(false); ?>
 			</select>
+			<br/>
+			<label>Credits</label>
+			<input type="number" class="span3" id="quiz_credits">
 		</form>
 	</div>
 	<?php
