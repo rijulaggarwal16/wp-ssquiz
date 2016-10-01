@@ -122,10 +122,11 @@ function ssquiz_start( $params ) {
 	} elseif(intval($quiz_history->question_offset) >= $info->total_questions){
 		if(is_super_admin() || !($info->two_chance || $info->one_chance)){
 			$wpdb->delete($wpdb->base_prefix.'self_ssquiz_response_history',array('user_id'=>$info->user->id,'quiz_id'=>$info->quiz->id),array('%d','%d'));
-			basicStartInitialize($info, $status);
 		}
-		else
+		else{
 			$wpdb->update($wpdb->base_prefix.'self_ssquiz_response_history',array('attempts' => intval($quiz_history->attempts) + 1), array('user_id'=>$info->user->id,'quiz_id'=>$info->quiz->id), array('%d'), array('%d','%d'));
+		}
+		basicStartInitialize($info, $status);
 	}else{
 		if(intval($quiz_history->question_offset) <= 0){
 			$status->questions_counter = 0;
@@ -419,7 +420,11 @@ function checkin_responses(&$info,$response_data,$reset_page){
 	$data['response_meta'] = base64_encode(gzcompress(serialize($final_data)));
 	$data['user_id'] = $info->user->id;
 	$data['quiz_id'] = $info->quiz->id;
-	$wpdb->replace("{$wpdb->base_prefix}self_ssquiz_response_history",$data,array('%s','%s','%d','%d','%d','%s','%d','%d'));
+	if(null == $response_history)
+		$data['attempts'] = 1;
+	else
+		$data['attempts'] = $response_history->attempts;
+	$wpdb->replace("{$wpdb->base_prefix}self_ssquiz_response_history",$data,array('%s','%s','%d','%d','%d','%s','%d','%d','%d'));
 }
 
 function ssquiz_check_answers( $number, &$info, &$answers ) {
