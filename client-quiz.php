@@ -585,7 +585,7 @@ function ssquiz_finish( &$finish_screen, &$status, &$info ) {
 		do_action( 'ssquiz_finished', $info->quiz->id, $info->user->id, $info->questions_right, $info->total_questions );
 		
 		//Sending email to user
-		if( $settings->user_will_receive && $info->user->email > '' ) {
+		if( !$status->exit && $settings->user_will_receive && $info->user->email > '' ) {
 			ssquiz_tag_replace($settings->user_email_subject, $info, 'email_subject');
 			ssquiz_tag_replace($settings->user_email_template, $info, 'user_email');
 			add_filter( 'wp_mail_content_type', 'ono_set_html_content_type' );
@@ -594,7 +594,7 @@ function ssquiz_finish( &$finish_screen, &$status, &$info ) {
 		}
 	
 		//Sending email to teacher
-		if( $settings->teacher_will_receive && $settings->teacher_email_address > '' ) {
+		if( !$status->exit && $settings->teacher_will_receive && $settings->teacher_email_address > '' ) {
 			ssquiz_tag_replace($settings->teacher_email_subject, $info, 'email_subject');
 			ssquiz_tag_replace($settings->teacher_email_address, $info, 'teacher_email');
 			ssquiz_tag_replace($settings->teacher_email_template, $info, 'teacher_email');
