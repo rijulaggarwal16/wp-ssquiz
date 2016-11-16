@@ -124,7 +124,12 @@ function ssquiz_start( $params ) {
 			$wpdb->delete($wpdb->base_prefix.'self_ssquiz_response_history',array('user_id'=>$info->user->id,'quiz_id'=>$info->quiz->id),array('%d','%d'));
 		}
 		else{
-			$wpdb->update($wpdb->base_prefix.'self_ssquiz_response_history',array('attempts' => intval($quiz_history->attempts) + 1), array('user_id'=>$info->user->id,'quiz_id'=>$info->quiz->id), array('%d'), array('%d','%d'));
+			$data = array(
+				'attempts' => intval($quiz_history->attempts) + 1,
+				'question_offset' => 0,
+				'page_offset' => 1
+			);
+			$wpdb->update($wpdb->base_prefix.'self_ssquiz_response_history', $data, array('user_id'=>$info->user->id,'quiz_id'=>$info->quiz->id), array('%d'), array('%d','%d'));
 		}
 		basicStartInitialize($info, $status);
 	}else{
