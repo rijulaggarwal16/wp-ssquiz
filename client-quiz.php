@@ -118,7 +118,10 @@ function ssquiz_start( $params ) {
 		$info->just_started = false;
 		$status->just_started = false;
 		$status->current_page = $info->current_page;
-		return ssquiz_return_quiz_body( '<h2>'. $info->quiz->name .'</h2>', unserialize( gzuncompress( base64_decode($quiz_history->finish_screen))), '<script>document.getElementsByClassName("history_list")[0].insertAdjacentHTML("beforebegin",\'<div class="ssquiz_history"></div>\');</script>' );
+		if($quiz_history->finish_screen == null)
+			return ssquiz_return_quiz_body("<h2>This exam has already been completed.</h2>","","");
+		else
+			return ssquiz_return_quiz_body( '<h2>'. $info->quiz->name .'</h2>', unserialize( gzuncompress( base64_decode($quiz_history->finish_screen))), '<script>document.getElementsByClassName("history_list")[0].insertAdjacentHTML("beforebegin",\'<div class="ssquiz_history"></div>\');</script>' );
 	} elseif(intval($quiz_history->question_offset) >= $info->total_questions){
 		if(is_super_admin() || !($info->two_chance || $info->one_chance)){
 			$wpdb->delete($wpdb->base_prefix.'self_ssquiz_response_history',array('user_id'=>$info->user->id,'quiz_id'=>$info->quiz->id),array('%d','%d'));
